@@ -1,2 +1,2 @@
-# VC
-Tarjeta virtual
+# Mauricio Muñoz Vergara
+Ingeniero en informatica
