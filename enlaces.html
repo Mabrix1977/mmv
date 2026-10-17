@@ -4,20 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mabrix // Enlaces y Bóveda de Accesos</title>
+  
+  <!-- Tipografía Matrix / Cyberpunk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&family=Orbitron:wght@500;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-dark: #050805;
+      --bg-dark: #040805;
       --matrix-green: #00ff41;
       --matrix-green-glow: rgba(0, 255, 65, 0.45);
       --matrix-dim: #008f11;
       --matrix-bright: #adffb0;
-      --panel-bg: rgba(6, 18, 10, 0.85);
+      --panel-bg: rgba(6, 18, 10, 0.88);
       --card-border: rgba(0, 255, 65, 0.28);
-      --danger-red: #ff3333;
+      --card-bg: rgba(0, 24, 10, 0.6);
     }
 
     * {
@@ -36,10 +38,10 @@
       flex-direction: column;
       align-items: center;
       position: relative;
-      padding: 30px 15px;
+      padding: 30px 15px 60px 15px;
     }
 
-    /* Fondo animado Matrix */
+    /* Fondo interactivo Matrix */
     #matrix-canvas {
       position: fixed;
       top: 0;
@@ -47,7 +49,7 @@
       width: 100%;
       height: 100%;
       z-index: 0;
-      opacity: 0.22;
+      opacity: 0.24;
       pointer-events: none;
     }
 
@@ -63,11 +65,12 @@
       pointer-events: none;
     }
 
+    /* Contenedor Principal */
     .portal-container {
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 980px;
+      max-width: 1050px;
       background: var(--panel-bg);
       border: 1px solid var(--card-border);
       border-radius: 8px;
@@ -76,7 +79,7 @@
       padding: 35px 25px;
     }
 
-    /* Barra superior */
+    /* Barra Superior */
     .top-bar {
       display: flex;
       justify-content: space-between;
@@ -131,23 +134,24 @@
 
     /* Bóveda Maestra Global */
     .master-vault-bar {
-      background: rgba(0, 35, 12, 0.55);
+      background: rgba(0, 35, 12, 0.65);
       border: 1px solid var(--matrix-green);
       border-radius: 6px;
       padding: 16px 20px;
-      margin-bottom: 22px;
+      margin-bottom: 25px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 15px;
-      box-shadow: 0 0 15px rgba(0, 255, 65, 0.15);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
     }
 
     .vault-label {
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--matrix-bright);
+      letter-spacing: 1.5px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -162,14 +166,15 @@
 
     .vault-master-inputs input {
       flex: 1;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       border: 1px solid var(--matrix-dim);
-      padding: 9px 12px;
+      padding: 9px 14px;
       color: #fff;
       font-family: 'Fira Code', monospace;
       font-size: 0.85rem;
       border-radius: 4px;
       outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .vault-master-inputs input:focus {
@@ -196,7 +201,7 @@
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
     }
 
-    /* Filtros y Orden */
+    /* Panel de Filtros y Búsqueda */
     .controls-panel {
       display: flex;
       flex-wrap: wrap;
@@ -243,28 +248,45 @@
       cursor: pointer;
     }
 
-    /* Lista de enlaces */
+    /* Tarjetas de enlaces */
     .link-list {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr;
       gap: 18px;
     }
 
     .link-card {
-      background: rgba(0, 20, 8, 0.6);
+      background: var(--card-bg);
       border: 1px solid rgba(0, 255, 65, 0.25);
       border-radius: 6px;
-      padding: 20px;
+      padding: 22px;
       transition: all 0.25s ease;
       display: flex;
       flex-direction: column;
       gap: 14px;
+      position: relative;
+    }
+
+    .link-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--matrix-dim);
+      transition: background 0.25s, width 0.25s;
     }
 
     .link-card:hover {
       border-color: var(--matrix-green);
-      box-shadow: 0 4px 18px rgba(0, 255, 65, 0.18);
+      box-shadow: 0 4px 20px rgba(0, 255, 65, 0.2);
       transform: translateY(-2px);
+    }
+
+    .link-card:hover::before {
+      background: var(--matrix-green);
+      width: 5px;
     }
 
     .link-header {
@@ -303,9 +325,9 @@
       word-break: break-all;
     }
 
-    /* Bóveda individual por tarjeta */
+    /* Bóveda interna por tarjeta */
     .card-vault {
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(0, 0, 0, 0.6);
       border: 1px dashed rgba(0, 255, 65, 0.35);
       padding: 12px 16px;
       border-radius: 4px;
@@ -332,12 +354,12 @@
     .cred-pill {
       background: rgba(0, 255, 65, 0.08);
       border: 1px solid var(--matrix-green);
-      padding: 6px 12px;
+      padding: 7px 12px;
       border-radius: 3px;
       font-size: 0.82rem;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .cred-pill strong {
@@ -346,20 +368,25 @@
 
     .copy-btn {
       background: transparent;
-      border: none;
-      color: var(--matrix-dim);
+      border: 1px solid var(--matrix-dim);
+      color: var(--matrix-bright);
       cursor: pointer;
-      font-size: 0.78rem;
-      text-decoration: underline;
+      font-size: 0.75rem;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-family: 'Fira Code', monospace;
+      transition: all 0.2s;
     }
 
     .copy-btn:hover {
-      color: var(--matrix-green);
+      background: var(--matrix-green);
+      color: #000;
     }
 
     .card-actions {
       display: flex;
       justify-content: flex-end;
+      margin-top: 5px;
     }
 
     .launch-btn {
@@ -393,6 +420,7 @@
 </head>
 <body>
 
+  <!-- Fondo Canvas Lluvia Matrix -->
   <canvas id="matrix-canvas"></canvas>
   <div class="scanline-overlay"></div>
 
@@ -404,7 +432,7 @@
     </div>
 
     <h1 class="system-title">Enlaces &amp; Accesos</h1>
-    <p class="system-subtitle">&gt; Bóveda centralizada con cifrado criptográfico de credenciales.</p>
+    <p class="system-subtitle">&gt; Bóveda unificada de plataformas operativas y credenciales protegidas.</p>
 
     <!-- Barra Maestra de Desbloqueo Global -->
     <section class="master-vault-bar">
@@ -434,8 +462,8 @@
     <!-- Lista de Enlaces -->
     <section class="link-list" id="linkList">
       
-      <!-- ENLACE 1: Recoline Requerimientos -->
-      <article class="link-card" data-name="Requerimientos Recoline" data-category="Intranet / Operaciones" id="card-1">
+      <!-- 1. Requerimientos -->
+      <article class="link-card" data-name="Requerimientos Recoline" data-category="Intranet / Operaciones">
         <div class="link-header">
           <div>
             <h2 class="link-title">Requerimientos</h2>
@@ -443,34 +471,169 @@
           </div>
           <span class="link-category">Intranet / Operaciones</span>
         </div>
-
-        <div class="link-url">
-          URL: <span>http://intranet.recoline.cl/sysrequermiento/public/eval</span>
-        </div>
-
-        <!-- Bóveda de credenciales cifradas -->
+        <div class="link-url">URL: <span>http://intranet.recoline.cl/sysrequermiento/public/eval</span></div>
         <div class="card-vault">
           <div class="vault-status-line">
-            <span>VAULT_ITEM_01 // PROTECTED</span>
+            <span>VAULT_NODE_01 // SECURE</span>
             <span id="vault-status-1" style="color: var(--matrix-dim);">BLOQUEADO</span>
           </div>
-
           <div class="cred-panel" id="cred-panel-1">
-            <div class="cred-pill">
-              Usuario: <strong id="val-usr-1">••••••••</strong>
-              <button class="copy-btn" onclick="copyValue('val-usr-1')">Copiar</button>
-            </div>
-            <div class="cred-pill">
-              Contraseña: <strong id="val-pass-1">••••••••</strong>
-              <button class="copy-btn" onclick="copyValue('val-pass-1')">Copiar</button>
-            </div>
+            <div class="cred-pill">Usuario: <strong id="val-usr-1">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-usr-1')">Copiar</button></div>
+            <div class="cred-pill">Contraseña: <strong id="val-pass-1">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-pass-1')">Copiar</button></div>
           </div>
         </div>
-
         <div class="card-actions">
-          <a href="http://intranet.recoline.cl/sysrequermiento/public/eval" target="_blank" rel="noopener noreferrer" class="launch-btn">
-            ACCEDER AL SITIO &rarr;
-          </a>
+          <a href="http://intranet.recoline.cl/sysrequermiento/public/eval" target="_blank" rel="noopener noreferrer" class="launch-btn">ACCEDER AL SITIO &rarr;</a>
+        </div>
+      </article>
+
+      <!-- 2. SGD -->
+      <article class="link-card" data-name="SGD Sistema Despachos" data-category="Logística / Despachos">
+        <div class="link-header">
+          <div>
+            <h2 class="link-title">SGD</h2>
+            <p class="link-description">Sistema de gestión de despachos</p>
+          </div>
+          <span class="link-category">Logística / Despachos</span>
+        </div>
+        <div class="link-url">URL: <span>https://sgd.recoline.cl/login.php?e=1</span></div>
+        <div class="card-vault">
+          <div class="vault-status-line">
+            <span>VAULT_NODE_02 // SECURE</span>
+            <span id="vault-status-2" style="color: var(--matrix-dim);">BLOQUEADO</span>
+          </div>
+          <div class="cred-panel" id="cred-panel-2">
+            <div class="cred-pill">Usuario: <strong id="val-usr-2">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-usr-2')">Copiar</button></div>
+            <div class="cred-pill">Contraseña: <strong id="val-pass-2">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-pass-2')">Copiar</button></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="https://sgd.recoline.cl/login.php?e=1" target="_blank" rel="noopener noreferrer" class="launch-btn">ACCEDER AL SITIO &rarr;</a>
+        </div>
+      </article>
+
+      <!-- 3. Gestor de Procesos -->
+      <article class="link-card" data-name="Gestor de Procesos" data-category="Operaciones / Procesos">
+        <div class="link-header">
+          <div>
+            <h2 class="link-title">Gestor de Procesos</h2>
+            <p class="link-description">Ruteros, inhibiciones y registro de envío de SMS</p>
+          </div>
+          <span class="link-category">Operaciones / Procesos</span>
+        </div>
+        <div class="link-url">URL: <span>http://intranet.recoline.cl/GestorProcesos/Login/</span></div>
+        <div class="card-vault">
+          <div class="vault-status-line">
+            <span>VAULT_NODE_03 // SECURE</span>
+            <span id="vault-status-3" style="color: var(--matrix-dim);">BLOQUEADO</span>
+          </div>
+          <div class="cred-panel" id="cred-panel-3">
+            <div class="cred-pill">Usuario: <strong id="val-usr-3">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-usr-3')">Copiar</button></div>
+            <div class="cred-pill">Contraseña: <strong id="val-pass-3">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-pass-3')">Copiar</button></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="http://intranet.recoline.cl/GestorProcesos/Login/" target="_blank" rel="noopener noreferrer" class="launch-btn">ACCEDER AL SITIO &rarr;</a>
+        </div>
+      </article>
+
+      <!-- 4. Gestor Bodegas -->
+      <article class="link-card" data-name="Gestor Bodegas" data-category="Inventario / Bodega">
+        <div class="link-header">
+          <div>
+            <h2 class="link-title">Gestor Bodegas</h2>
+            <p class="link-description">Registro de productos en nuestra bodega</p>
+          </div>
+          <span class="link-category">Inventario / Bodega</span>
+        </div>
+        <div class="link-url">URL: <span>http://intranet.recoline.cl/GestorBodega/public/</span></div>
+        <div class="card-vault">
+          <div class="vault-status-line">
+            <span>VAULT_NODE_04 // SECURE</span>
+            <span id="vault-status-4" style="color: var(--matrix-dim);">BLOQUEADO</span>
+          </div>
+          <div class="cred-panel" id="cred-panel-4">
+            <div class="cred-pill">Usuario: <strong id="val-usr-4">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-usr-4')">Copiar</button></div>
+            <div class="cred-pill">Contraseña: <strong id="val-pass-4">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-pass-4')">Copiar</button></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="http://intranet.recoline.cl/GestorBodega/public/" target="_blank" rel="noopener noreferrer" class="launch-btn">ACCEDER AL SITIO &rarr;</a>
+        </div>
+      </article>
+
+      <!-- 5. Sistema de Incentivos -->
+      <article class="link-card" data-name="Sistema de Incentivos" data-category="RRHH / Incentivos">
+        <div class="link-header">
+          <div>
+            <h2 class="link-title">Sistema de Incentivos</h2>
+            <p class="link-description">Plataforma interna de cálculo y consulta de incentivos</p>
+          </div>
+          <span class="link-category">RRHH / Incentivos</span>
+        </div>
+        <div class="link-url">URL: <span>http://intranet.recoline.cl/Incentivos/public/</span></div>
+        <div class="card-vault">
+          <div class="vault-status-line">
+            <span>VAULT_NODE_05 // SECURE</span>
+            <span id="vault-status-5" style="color: var(--matrix-dim);">BLOQUEADO</span>
+          </div>
+          <div class="cred-panel" id="cred-panel-5">
+            <div class="cred-pill">Usuario: <strong id="val-usr-5">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-usr-5')">Copiar</button></div>
+            <div class="cred-pill">Contraseña: <strong id="val-pass-5">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-pass-5')">Copiar</button></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="http://intranet.recoline.cl/Incentivos/public/" target="_blank" rel="noopener noreferrer" class="launch-btn">ACCEDER AL SITIO &rarr;</a>
+        </div>
+      </article>
+
+      <!-- 6. DOCMAN -->
+      <article class="link-card" data-name="DOCMAN Documentacion ISO" data-category="Calidad / Gestión Documental ISO">
+        <div class="link-header">
+          <div>
+            <h2 class="link-title">DOCMAN</h2>
+            <p class="link-description">Documentación de flujo de ventas ISO</p>
+          </div>
+          <span class="link-category">Calidad / Gestión Documental ISO</span>
+        </div>
+        <div class="link-url">URL: <span>http://intranet.recoline.cl/DocMan/public/Home</span></div>
+        <div class="card-vault">
+          <div class="vault-status-line">
+            <span>VAULT_NODE_06 // SECURE</span>
+            <span id="vault-status-6" style="color: var(--matrix-dim);">BLOQUEADO</span>
+          </div>
+          <div class="cred-panel" id="cred-panel-6">
+            <div class="cred-pill">Usuario: <strong id="val-usr-6">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-usr-6')">Copiar</button></div>
+            <div class="cred-pill">Contraseña: <strong id="val-pass-6">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-pass-6')">Copiar</button></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="http://intranet.recoline.cl/DocMan/public/Home" target="_blank" rel="noopener noreferrer" class="launch-btn">ACCEDER AL SITIO &rarr;</a>
+        </div>
+      </article>
+
+      <!-- 7. CRM Recoline -->
+      <article class="link-card" data-name="CRM Recoline" data-category="Clientes / CRM">
+        <div class="link-header">
+          <div>
+            <h2 class="link-title">CRM Recoline</h2>
+            <p class="link-description">Gestión de relaciones con clientes y prospectos</p>
+          </div>
+          <span class="link-category">Clientes / CRM</span>
+        </div>
+        <div class="link-url">URL: <span>https://api.recoline.cl/crm_reco/public/</span></div>
+        <div class="card-vault">
+          <div class="vault-status-line">
+            <span>VAULT_NODE_07 // SECURE</span>
+            <span id="vault-status-7" style="color: var(--matrix-dim);">BLOQUEADO</span>
+          </div>
+          <div class="cred-panel" id="cred-panel-7">
+            <div class="cred-pill">Usuario: <strong id="val-usr-7">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-usr-7')">Copiar</button></div>
+            <div class="cred-pill">Contraseña: <strong id="val-pass-7">••••••••</strong> <button class="copy-btn" onclick="copyValue('val-pass-7')">Copiar</button></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="https://api.recoline.cl/crm_reco/public/" target="_blank" rel="noopener noreferrer" class="launch-btn">ACCEDER AL SITIO &rarr;</a>
         </div>
       </article>
 
@@ -479,7 +642,7 @@
   </main>
 
   <script>
-    // --- Lluvia Matrix ---
+    // --- Lluvia Digital Matrix en Canvas ---
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -500,44 +663,47 @@
       }
     }, 33);
 
-    
-    // Payload cifrado de Recoline: usr="13267373", pass="Reco2021"
-    // --- Bóveda Cifrada con Clave Maestra "Maximo1977." ---
-    // Payload precalculado con XOR exacto para: {"usr":"13267373","pass":"Reco2021"}
+    // --- Bóveda Cifrada en Base64 para los 7 servicios ---
     const ENCRYPTED_STORE = {
-      1: {
-        cipher: "eyAidXNyIjogIjEzMjY3MzczIiwgInBhc3MiOiAiUmVjbzIwMjEiIH0=" // Codificado en Base64
-      }
+      1: "eyAidXNyIjogIjEzMjY3MzczIiwgInBhc3MiOiAiUmVjbzIwMjEiIH0=", // Requerimientos
+      2: "eyAidXNyIjogIm1hbXVub3pAcmVjb2xpbmUuY2wiLCAicGFzcyI6ICJtYW11bm96IiB9", // SGD
+      3: "eyAidXNyIjogIjEzMjY3MzczIiwgInBhc3MiOiAiNzMxMyIgfQ==", // Gestor Procesos
+      4: "eyAidXNyIjogIjEzMjY3MzczIiwgInBhc3MiOiAiMTMyNiIgfQ==", // Gestor Bodegas
+      5: "eyAidXNyIjogIjEzMjY3MzczIiwgInBhc3MiOiAiNzMxMyIgfQ==", // Incentivos
+      6: "eyAidXNyIjogIjEzMjY3MzczIiwgInBhc3MiOiAiMTMyNiIgfQ==", // DOCMAN
+      7: "eyAidXNyIjogIjEzMjY3MzczIiwgInBhc3MiOiAiNzMxMyIgfQ=="  // CRM
     };
 
-    // Función de validación y desbloqueo
+    // Validación de clave maestra: "Maximo1977."
     function unlockMasterVault() {
       const enteredKey = document.getElementById('globalMasterKey').value.trim();
-      
-      // Verificación directa de clave maestra
+
       if (enteredKey !== "Maximo1977.") {
         alert("Clave maestra incorrecta. Acceso denegado.");
         return;
       }
 
       try {
-        // Desbloquear credenciales
-        const payload = JSON.parse(atob(ENCRYPTED_STORE[1].cipher));
-        
-        document.getElementById('val-usr-1').textContent = payload.usr;
-        document.getElementById('val-pass-1').textContent = payload.pass;
-        document.getElementById('cred-panel-1').style.display = 'flex';
-        
-        const statusElem = document.getElementById('vault-status-1');
-        statusElem.textContent = 'DESBLOQUEADO [OK]';
-        statusElem.style.color = 'var(--matrix-green)';
+        Object.keys(ENCRYPTED_STORE).forEach(id => {
+          const payload = JSON.parse(atob(ENCRYPTED_STORE[id]));
+          document.getElementById(`val-usr-${id}`).textContent = payload.usr;
+          document.getElementById(`val-pass-${id}`).textContent = payload.pass;
+          document.getElementById(`cred-panel-${id}`).style.display = 'flex';
+          
+          const statusElem = document.getElementById(`vault-status-${id}`);
+          if (statusElem) {
+            statusElem.textContent = 'DESBLOQUEADO [OK]';
+            statusElem.style.color = 'var(--matrix-green)';
+          }
+        });
 
-        alert("Bóveda desbloqueada con éxito.");
+        alert("Bóveda desbloqueada con éxito. Credenciales disponibles.");
       } catch (e) {
         alert("Error al procesar los datos de la bóveda.");
       }
     }
-	
+
+    // Copiar al portapapeles
     function copyValue(elementId) {
       const val = document.getElementById(elementId).textContent;
       navigator.clipboard.writeText(val).then(() => {
@@ -545,7 +711,14 @@
       });
     }
 
-    // --- Búsqueda y Ordenamiento ---
+    // Permite presionar Enter en el campo de contraseña para desbloquear
+    document.getElementById('globalMasterKey').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        unlockMasterVault();
+      }
+    });
+
+    // --- Filtro de Búsqueda y Ordenamiento ---
     const searchInput = document.getElementById('searchInput');
     const sortSelect = document.getElementById('sortSelect');
     const linkList = document.getElementById('linkList');
