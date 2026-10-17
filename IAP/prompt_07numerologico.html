@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mabrix // Prompts Numerológicos & Análisis de Ciclos</title>
+  
+  <!-- Tipografía ergonómica y técnica -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta ergonómica sin fatiga visual (Dark Mode Matrix Suave) */
+      --bg-dark: #070a08;
+      --bg-surface: #0f1611;
+      --bg-card: #151f18;
+      --bg-card-hover: #1b271f;
+      --border-color: #243427;
+      --border-accent: #34b35e;
+      
+      --text-main: #e6ede8;
+      --text-dim: #96a99b;
+      --text-muted: #607565;
+      
+      --matrix-green: #38b764;
+      --matrix-green-soft: rgba(56, 183, 100, 0.12);
+      --matrix-glow: rgba(56, 183, 100, 0.35);
+      
+      --code-bg: #0b100d;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 24px 16px 80px 16px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Navegación Superior */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'Fira Code', monospace;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--matrix-green);
+      border-color: var(--matrix-green);
+      background-color: var(--matrix-green-soft);
+    }
+
+    /* 1. TÍTULO PRINCIPAL */
+    .header-section {
+      margin-bottom: 24px;
+    }
+
+    .header-section h1 {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header-section h1 span.icon {
+      color: var(--matrix-green);
+    }
+
+    .header-section p {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+    }
+
+    /* 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) */
+    .form-wrapper {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 26px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-header-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--matrix-green);
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .collapse-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    details.form-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    details.form-section[open] {
+      border-color: var(--border-accent);
+    }
+
+    summary.section-summary {
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+      color: #d8e5dc;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    summary.section-summary:hover {
+      background: var(--bg-card-hover);
+      color: var(--matrix-green);
+    }
+
+    summary.section-summary::after {
+      content: "▸";
+      font-size: 1rem;
+      color: var(--matrix-green);
+      transition: transform 0.2s ease;
+    }
+
+    details[open] summary.section-summary::after {
+      transform: rotate(90deg);
+    }
+
+    .section-content {
+      padding: 16px;
+      background: var(--code-bg);
+      border-top: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .field-full {
+      grid-column: 1 / -1;
+    }
+
+    .field-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-item label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .field-item input, 
+    .field-item textarea {
+      background: #121914;
+      border: 1px solid var(--border-color);
+      color: #e6ede8;
+      font-size: 0.84rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field-item textarea {
+      min-height: 64px;
+      line-height: 1.45;
+      resize: vertical;
+    }
+
+    .field-item input:focus, 
+    .field-item textarea:focus {
+      border-color: var(--matrix-green);
+      box-shadow: 0 0 0 2px var(--matrix-green-soft);
+    }
+
+    /* 3. VISOR DE PROMPTS MODULAR CON SELECTOR DROPDOWN */
+    .viewer-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+      scroll-margin-top: 20px;
+    }
+
+    .selector-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .selector-label {
+      font-size: 0.8rem;
+      font-family: 'Fira Code', monospace;
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .prompt-select-dropdown {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--border-accent);
+      color: #ffffff;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .prompt-select-dropdown:focus {
+      box-shadow: 0 0 12px var(--matrix-glow);
+    }
+
+    /* Área de salida del prompt prellenado */
+    .prompt-viewer-card {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .viewer-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .viewer-meta-title {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: 1.05rem;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .viewer-meta-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--matrix-green);
+      background: rgba(56, 183, 100, 0.1);
+      border: 1px solid rgba(56, 183, 100, 0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .output-box {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: #d1ded5;
+      background: #080c09;
+      border: 1px solid rgba(36, 52, 39, 0.7);
+      border-radius: 4px;
+      padding: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.55;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .output-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .output-box::-webkit-scrollbar-thumb {
+      background: #243427;
+      border-radius: 3px;
+    }
+
+    /* Botón de acción minimalista: Copiar */
+    .action-bar {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-copy-minimal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.84rem;
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      background: var(--bg-card);
+      color: #e6ede8;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy-minimal:hover {
+      border-color: var(--matrix-green);
+      color: var(--matrix-green);
+      background: var(--matrix-green-soft);
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.2);
+    }
+
+    .btn-copy-minimal.copied {
+      background: rgba(56, 183, 100, 0.15);
+      border-color: var(--matrix-green);
+      color: #72e89d;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 45px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Barra Superior -->
+    <nav class="top-nav">
+      <a href="index.html" class="back-btn">&larr; Prompt</a>
+    </nav>
+
+    <!-- 1. TÍTULO PRINCIPAL -->
+    <header class="header-section">
+      <h1><span class="icon">⚡</span> Prompts // Análisis Numerológico & Ciclos de Vida</h1>
+      <p>Configura tus variables en los bloques colapsables y selecciona el prompt que necesitas abajo. Se genera prellenado y listo para copiar en segundos.</p>
+    </header>
+
+    <!-- 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) -->
+    <section class="form-wrapper">
+      <div class="form-header-title">
+        <span>⚙ FORMULARIO DE VARIABLES RECOLECTADAS</span>
+      </div>
+
+      <div class="collapse-group">
+        
+        <!-- Bloque 1: Identidad & Datos de Nacimiento -->
+        <details class="form-section" open>
+          <summary class="section-summary">1. Datos de Nacimiento & Nombre de Origen</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Fecha de Nacimiento Completa</label>
+              <input type="text" id="var_fecha_nacimiento" value="14 de marzo de 1995">
+            </div>
+            <div class="field-item">
+              <label>Nombre Completo de Nacimiento</label>
+              <input type="text" id="var_nombre_completo" value="Carlos Eduardo Morales Soto">
+            </div>
+            <div class="field-item field-full">
+              <label>Bloque MI MATRIZ NUMEROLÓGICA (Generado por el Prompt 1)</label>
+              <textarea id="var_matriz_numerologica" placeholder="Pega aquí el bloque 'MI MATRIZ NUMEROLÓGICA' entregado por la IA tras ejecutar el Prompt 01...">CAMINO DE VIDA: 5 (14/03/1995 -> 1+4+3+1+9+9+5 = 32 = 5)
+NÚMERO DE DESTINO / EXPRESIÓN: 8
+ALMA / ANHELO DEL CORAZÓN: 3
+PERSONALIDAD EXTERNA: 5
+NÚMERO DE MADUREZ: 4
+AÑO PERSONAL ACTUAL: 7</textarea>
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 2: Relaciones & Vínculos Afectivos -->
+        <details class="form-section">
+          <summary class="section-summary">2. Dinámica Vincular & Compatibilidad</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Situación Sentimental Actual</label>
+              <input type="text" id="var_relacion_estado" value="En pareja formal / convivencia">
+            </div>
+            <div class="field-item">
+              <label>Fecha de Nacimiento de la Pareja / Persona Clave</label>
+              <input type="text" id="var_pareja_fecha" value="28 de septiembre de 1996">
+            </div>
+            <div class="field-item field-full">
+              <label>Fricción Vincular o Dinámica Recurrente</label>
+              <input type="text" id="var_relacion_patron" value="Búsqueda de libertad e independencia personal frente a necesidad de orden y estructura mutua">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 3: Trabajo, Carrera & Vocación -->
+        <details class="form-section">
+          <summary class="section-summary">3. Vocación Profesional & Talento Productivo</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Ocupación o Profesión Actual</label>
+              <input type="text" id="var_trabajo_actual" value="Desarrollo de proyectos digitales y automatización con IA">
+            </div>
+            <div class="field-item">
+              <label>Aspiración / Cambio de Carrera Deseado</label>
+              <input type="text" id="var_trabajo_meta" value="Escalar a consultoría estratégica independiente y creación de productos propios">
+            </div>
+            <div class="field-item field-full">
+              <label>Punto de Fricción en el Trabajo</label>
+              <input type="text" id="var_trabajo_desgaste" value="Sensación de dispersión al gestionar múltiples iniciativas sin terminarlas a tiempo">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 4: Finanzas & Abundancia Material -->
+        <details class="form-section">
+          <summary class="section-summary">4. Finanzas, Mentalidad de Dinero & Prosperidad</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Objetivo Financiero Inmediato</label>
+              <input type="text" id="var_finanzas_meta" value="Diversificar fuentes de ingresos recurrentes y construir un fondo de inversión sólido">
+            </div>
+            <div class="field-item">
+              <label>Patrón de Gasto o Bloqueo Financiero</label>
+              <input type="text" id="var_finanzas_habito" value="Ingresos intermitentes en picos altos seguidos de relajación y fuga de capital hormiga">
+            </div>
+            <div class="field-item field-full">
+              <label>Emoción Predominante con el Dinero</label>
+              <input type="text" id="var_finanzas_emocion" value="Incertidumbre cuando no hay predictibilidad a 6 meses vista">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 5: Ciclos Temporales & Timing Táctico -->
+        <details class="form-section">
+          <summary class="section-summary">5. Ciclo Anual, Meses Clave & Horizontes</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Año de Proyección</label>
+              <input type="text" id="var_ciclo_ano" value="Próximos 12 meses (Ciclo 2026 - 2027)">
+            </div>
+            <div class="field-item">
+              <label>Foco Estratégico Prioritario</label>
+              <input type="text" id="var_ciclo_prioridad" value="Consolidación profesional, foco mental y cierre de compromisos pendientes">
+            </div>
+            <div class="field-item field-full">
+              <label>Momento Decisivo Previsto</label>
+              <input type="text" id="var_ciclo_hito" value="Lanzamiento de servicio independiente en el segundo semestre">
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- 3. VISOR MODULAR CON SELECTOR DROPDOWN -->
+    <section class="viewer-panel" id="viewerPanel">
+      <div class="selector-bar">
+        <label for="promptSelector" class="selector-label">Selecciona el Prompt a Visualizar:</label>
+        <select id="promptSelector" class="prompt-select-dropdown">
+          <option value="1">1. Matriz de Numerología Pitagórica & Código Natal</option>
+          <option value="2">2. Arquitectura de Personalidad, Sombra & Números Maestros</option>
+          <option value="3">3. Sinastría Numerológica & Sincronía Vincular</option>
+          <option value="4">4. Vocación, Arquetipo Profesional & Capital de Talento</option>
+          <option value="5">5. Termostato Financiero & Relación con la Prosperidad</option>
+          <option value="6">6. Navegación Táctica de Ciclos: Año Personal & Meses Clave</option>
+        </select>
+      </div>
+
+      <!-- Tarjeta del Prompt Activo -->
+      <div class="prompt-viewer-card">
+        <div class="viewer-meta">
+          <span class="viewer-meta-title" id="displayPromptTitle">1. Matriz de Numerología Pitagórica & Código Natal</span>
+          <span class="viewer-meta-tag" id="displayPromptCategory">CÁLCULO & CÓDIGO BASE</span>
+        </div>
+
+        <pre class="output-box" id="activePromptOutput"></pre>
+
+        <div class="action-bar">
+          <button class="btn-copy-minimal" id="btnCopyPrompt" onclick="copyCurrentPrompt()">
+            📋 Copiar Prompt
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      MABRIX // NUMEROLOGY PROMPT ENGINE &bull; ERGONOMIC DARK INTERFACE
+    </footer>
+
+  </div>
+
+  <!-- Lógica JavaScript Dinámica y Reactiva con Auto-Scroll Suave -->
+  <script>
+    const promptSelector = document.getElementById('promptSelector');
+    const displayTitle = document.getElementById('displayPromptTitle');
+    const displayCategory = document.getElementById('displayPromptCategory');
+    const outputBox = document.getElementById('activePromptOutput');
+    const btnCopy = document.getElementById('btnCopyPrompt');
+    const viewerPanel = document.getElementById('viewerPanel');
+
+    const PROMPT_META = {
+      "1": { title: "1. Matriz de Numerología Pitagórica & Código Natal", category: "CÁLCULO & CÓDIGO BASE" },
+      "2": { title: "2. Arquitectura de Personalidad, Sombra & Números Maestros", category: "IDENTIDAD & SOMBRA" },
+      "3": { title: "3. Sinastría Numerológica & Sincronía Vincular", category: "RELACIONES & SINASTRÍA" },
+      "4": { title: "4. Vocación, Arquetipo Profesional & Capital de Talento", category: "VOCACIÓN & CARRERA" },
+      "5": { title: "5. Termostato Financiero & Relación con la Prosperidad", category: "FINANZAS & ABUNDANCIA" },
+      "6": { title: "6. Navegación Táctica de Ciclos: Año Personal & Meses Clave", category: "TIMING & PREDICCIÓN ANUAL" }
+    };
+
+    function buildPrompt(id) {
+      const fechaNac = document.getElementById('var_fecha_nacimiento').value.trim();
+      const nombreCompleto = document.getElementById('var_nombre_completo').value.trim();
+      const matrizNumerologica = document.getElementById('var_matriz_numerologica').value.trim();
+
+      const relacionEstado = document.getElementById('var_relacion_estado').value.trim();
+      const parejaFecha = document.getElementById('var_pareja_fecha').value.trim();
+      const relacionPatron = document.getElementById('var_relacion_patron').value.trim();
+
+      const trabajoActual = document.getElementById('var_trabajo_actual').value.trim();
+      const trabajoMeta = document.getElementById('var_trabajo_meta').value.trim();
+      const trabajoDesgaste = document.getElementById('var_trabajo_desgaste').value.trim();
+
+      const finanzasMeta = document.getElementById('var_finanzas_meta').value.trim();
+      const finanzasHabito = document.getElementById('var_finanzas_habito').value.trim();
+      const finanzasEmocion = document.getElementById('var_finanzas_emocion').value.trim();
+
+      const cicloAno = document.getElementById('var_ciclo_ano').value.trim();
+      const cicloPrioridad = document.getElementById('var_ciclo_prioridad').value.trim();
+      const cicloHito = document.getElementById('var_ciclo_hito').value.trim();
+
+      const matrizParaPrompt = matrizNumerologica || '[PEGA AQUÍ TU BLOQUE MI MATRIZ NUMEROLÓGICA TRAS EJECUTAR EL PROMPT 1]';
+
+      switch(id) {
+        case "1":
+          return `Actúa como un maestro analista en Numerología Pitagórica y Occidental aplicada al desarrollo del potencial humano.
+
+Mis datos de origen:
+- Fecha de nacimiento exacta: ${fechaNac || '[No especificada]'}
+- Nombre completo tal como figura en mi acta/documento de nacimiento: ${nombreCompleto || '[No especificado]'}
+
+Instrucciones técnicas de cálculo:
+1. Desglosa paso a paso las operaciones matemáticas sin omitir reducciones teosóficas intermedias:
+   * Camino de Vida (Life Path Number): Suma de día + mes + año con reducción a un dígito (respetando números maestros 11, 22, 33).
+   * Número de Destino / Expresión: Valor gemátrico pitagórico del nombre completo (vocales + consonantes).
+   * Deseo del Alma (Soul Urge) / Anhelo del Corazón: Suma exclusiva de las vocales.
+   * Personalidad Externa: Suma de consonantes (la máscara o impresión ante el entorno).
+   * Número de Madurez / Realización: Integración del Camino de Vida + Número de Destino.
+   * Número de Día de Nacimiento: Don innato directo.
+   * Año Personal actual: Ciclo vibracional en base al año en curso.
+2. Si detectas números maestros (11, 22, 33) o kármicos (13, 14, 16, 19) en las sumas previas a la reducción final, explicítalos puntualmente con su significado funcional.
+3. Finaliza obligatoriamente tu respuesta entregando un bloque sintético y estructurado en texto plano titulado exactamente:
+MI MATRIZ NUMEROLÓGICA
+(Conteniendo cada número calculado con su correspondiente fórmula de derivación).`;
+
+        case "2":
+          return `Actúa como un mentor analista en Numerología Arquetípica y Psicología de la Personalidad.
+
+Aquí está mi configuración de base:
+"""
+${matrizParaPrompt}
+"""
+
+Desarrolla una lectura profunda, sin ambigüedades ni frases genéricas aplicables a cualquiera:
+1. Arquitectura de Carácter: ¿Cómo interactúan mi Camino de Vida con mi Número de Destino? Identifica si existe coherencia interna o si operan como fuerzas en tensión.
+2. El Deseo Secreto del Alma vs. La Máscara Externa: Contrasta lo que mi mundo íntimo anhela frente a lo que proyecto socialmente.
+3. Diagnóstico de la Sombra y Polaridad Negativa: Explica el riesgo de involución o distorsión de mis números dominantes (ej. rigidez, dispersión, evasión, necesidad de control o fatiga por sobreexigencia).
+4. El Don Inexplorado: ¿Qué talento latente está contenido en mi matriz que habitualmente las personas con esta vibración pasan por alto?
+5. Concluye con 3 Preguntas de Indagación Socrática para confrontar mis patrones actuales.`;
+
+        case "3":
+          return `Actúa como un consultor en Vinculación Sistémica y Sinastría Numerológica.
+
+Mi matriz numerológica:
+"""
+${matrizParaPrompt}
+"""
+
+Contexto de la relación:
+- Estado o vínculo actual: ${relacionEstado || '[No especificado]'}
+- Fecha de nacimiento de la otra persona: ${parejaFecha || '[No especificada]'}
+- Dinámica o fricción recurrente observada: ${relacionPatron || '[No especificada]'}
+
+Ejecuta el siguiente protocolo analítico:
+1. Cálculo de compatibilidad de base: Determina el Camino de Vida de la otra persona y el "Número de la Relación" (suma de ambos Caminos de Vida).
+2. Puntos de Resonancia Natural: Dónde fluye la comunicación, el afecto y la afinidad espontánea entre ambas energías.
+3. El Disparador de Fricción: Explica con base en las polaridades numéricas qué activa los malentendidos o el choque de expectativas.
+4. Misión del Vínculo: ¿Para qué se encontraron estas dos personas? ¿Qué aprendizaje evolutivo se exige mutuamente?
+5. 3 Acuerdos Operativos Concretos: Pautas prácticas y no esotéricas para optimizar la convivencia y el entendimiento diario.`;
+
+        case "4":
+          return `Actúa como un estratega de carrera y cazador de talento con dominio en arquetipos numerológicos.
+
+Mi matriz numerológica:
+"""
+${matrizParaPrompt}
+"""
+
+Contexto laboral y metas:
+- Ocupación o contexto profesional actual: ${trabajoActual || '[No especificado]'}
+- Meta de evolución o cambio: ${trabajoMeta || '[No especificado]'}
+- Puntos de desgaste, fatiga o insatisfacción: ${trabajoDesgaste || '[No especificado]'}
+
+Tu tarea:
+1. Alineación Vocacional: Evalúa el grado de sintonía entre mi actividad actual y las vibraciones de mi Número de Destino y Camino de Vida.
+2. El Arquetipo Profesional Óptimo: ¿En qué tipo de rol, sector o estructura de trabajo (liderazgo, asesoría, innovación solitaria, ejecución técnica, alianzas) mi energía rinde al máximo sin quemarse?
+3. Focos de Auto-Fricción: ¿Qué exigencia o tarea recurrente agota mi motivación debido a una incompatibilidad con mis patrones natales?
+4. Estrategia de Transición en 3 Pasos: Acciones tácticas para orientar mi carrera hacia mi verdadero potencial en los próximos 6 a 12 meses.`;
+
+        case "5":
+          return `Actúa como un analista financiero conductual y consultor de mentalidad de abundancia basado en patrones numerológicos.
+
+Mi matriz numerológica:
+"""
+${matrizParaPrompt}
+"""
+
+Situación y objetivos financieros:
+- Objetivo de dinero actual: ${finanzasMeta || '[No especificado]'}
+- Hábito o fuga detectada: ${finanzasHabito || '[No especificado]'}
+- Emoción o sensación predominante frente al dinero: ${finanzasEmocion || '[No especificado]'}
+
+Desarrolla el siguiente diagnóstico:
+1. El Termostato de Riqueza Natal: ¿Cómo procesa mi vibración numérica la generación, acumulación y flujo del dinero? (Enfoque en números materiales 8, organizativos 4, adaptables 5 o creativos 3).
+2. La Trampa de Escasez: Cuál es el sesgo inconsciente que sabotea mi flujo de liquidez según mis cifras kármicas o retos natales.
+3. Rutas de Menor Resistencia: Qué modelos de monetización o hábitos de ahorro e inversión están más alineados con mi configuración personal.
+4. 3 Ejercicios Prácticos de Desbloqueo: Protocolos concretos y ejecutables esta misma semana para ordenar y elevar mi relación con el dinero.`;
+
+        case "6":
+          return `Actúa como un estratega de ciclos personales y sincronía temporal con base en el sistema de Años y Meses Personales.
+
+Mi matriz numerológica:
+"""
+${matrizParaPrompt}
+"""
+
+Horizonte temporal:
+- Ventana de análisis: ${cicloAno || '[Próximos 12 meses]'}
+- Foco o prioridad deseada: ${cicloPrioridad || '[No especificado]'}
+- Evento o hito decisivo previsto: ${cicloHito || '[No especificado]'}
+
+Genera una hoja de ruta mensual estructurada:
+1. Diagnóstico del Año Personal: Determina la temática central del ciclo (del 1 al 9) y su palabra clave directriz. ¿Es un año de siembra, de expansión, de orden disciplinado, de cambio radical o de cierre de ciclos?
+2. Desglose Trimestre a Trimestre (4 Cuatrimestres / Fases):
+   * Fase 1: Enfoque y preparación.
+   * Fase 2: Acción y visibilidad.
+   * Fase 3: Ajuste y calibración.
+   * Fase 4: Consolidación y balance.
+3. Calendario Táctico Mes a Mes: Calcula la vibración de los próximos 12 meses e indica:
+   * Meses de Máxima Tracción (dónde empujar, cerrar tratos o iniciar proyectos).
+   * Meses de Pausa e Integración (dónde evitar riesgos impulsivos y priorizar orden interno).
+4. Advertencia de Puntos Ciegos: Una regla clara de lo que NO debo forzar durante este ciclo.`;
+
+        default:
+          return "";
+      }
+    }
+
+    function renderActivePrompt(shouldScroll = false) {
+      const selectedId = promptSelector.value;
+      displayTitle.textContent = PROMPT_META[selectedId].title;
+      displayCategory.textContent = PROMPT_META[selectedId].category;
+      outputBox.textContent = buildPrompt(selectedId);
+
+      if (shouldScroll) {
+        viewerPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function copyCurrentPrompt() {
+      const textToCopy = outputBox.innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalHTML = btnCopy.innerHTML;
+        btnCopy.innerHTML = '✔ ¡Copiado!';
+        btnCopy.classList.add('copied');
+
+        setTimeout(() => {
+          btnCopy.innerHTML = originalHTML;
+          btnCopy.classList.remove('copied');
+        }, 1800);
+      }).catch(err => {
+        console.error('Error al copiar:', err);
+      });
+    }
+
+    // Al cambiar la opción en el selector, actualiza y realiza scroll suave al visor
+    promptSelector.addEventListener('change', () => {
+      renderActivePrompt(true);
+    });
+
+    // Al editar cualquier campo del formulario, actualiza el prompt en vivo sin mover la pantalla
+    const allInputs = document.querySelectorAll('.form-wrapper input, .form-wrapper textarea');
+    allInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        renderActivePrompt(false);
+      });
+    });
+
+    // Carga inicial
+    renderActivePrompt(false);
+  </script>
+</body>
+</html>

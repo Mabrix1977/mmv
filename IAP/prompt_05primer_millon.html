@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mabrix // Prompts El Primer Millón & Creación de Riqueza</title>
+  
+  <!-- Tipografía ergonómica y técnica -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta ergonómica sin fatiga visual (Dark Mode Matrix Suave) */
+      --bg-dark: #070a08;
+      --bg-surface: #0f1611;
+      --bg-card: #151f18;
+      --bg-card-hover: #1b271f;
+      --border-color: #243427;
+      --border-accent: #34b35e;
+      
+      --text-main: #e6ede8;
+      --text-dim: #96a99b;
+      --text-muted: #607565;
+      
+      --matrix-green: #38b764;
+      --matrix-green-soft: rgba(56, 183, 100, 0.12);
+      --matrix-glow: rgba(56, 183, 100, 0.35);
+      
+      --code-bg: #0b100d;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 24px 16px 80px 16px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Navegación Superior */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'Fira Code', monospace;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--matrix-green);
+      border-color: var(--matrix-green);
+      background-color: var(--matrix-green-soft);
+    }
+
+    /* 1. TÍTULO PRINCIPAL */
+    .header-section {
+      margin-bottom: 24px;
+    }
+
+    .header-section h1 {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header-section h1 span.icon {
+      color: var(--matrix-green);
+    }
+
+    .header-section p {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+    }
+
+    /* 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) */
+    .form-wrapper {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 26px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-header-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--matrix-green);
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .collapse-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    details.form-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    details.form-section[open] {
+      border-color: var(--border-accent);
+    }
+
+    summary.section-summary {
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+      color: #d8e5dc;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    summary.section-summary:hover {
+      background: var(--bg-card-hover);
+      color: var(--matrix-green);
+    }
+
+    summary.section-summary::after {
+      content: "▸";
+      font-size: 1rem;
+      color: var(--matrix-green);
+      transition: transform 0.2s ease;
+    }
+
+    details[open] summary.section-summary::after {
+      transform: rotate(90deg);
+    }
+
+    .section-content {
+      padding: 16px;
+      background: var(--code-bg);
+      border-top: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .field-full {
+      grid-column: 1 / -1;
+    }
+
+    .field-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-item label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .field-item input, 
+    .field-item textarea {
+      background: #121914;
+      border: 1px solid var(--border-color);
+      color: #e6ede8;
+      font-size: 0.84rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field-item textarea {
+      min-height: 64px;
+      line-height: 1.45;
+      resize: vertical;
+    }
+
+    .field-item input:focus, 
+    .field-item textarea:focus {
+      border-color: var(--matrix-green);
+      box-shadow: 0 0 0 2px var(--matrix-green-soft);
+    }
+
+    /* 3. VISOR DE PROMPTS MODULAR CON SELECTOR DROPDOWN */
+    .viewer-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+      scroll-margin-top: 20px;
+    }
+
+    .selector-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .selector-label {
+      font-size: 0.8rem;
+      font-family: 'Fira Code', monospace;
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .prompt-select-dropdown {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--border-accent);
+      color: #ffffff;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .prompt-select-dropdown:focus {
+      box-shadow: 0 0 12px var(--matrix-glow);
+    }
+
+    /* Área de salida del prompt prellenado */
+    .prompt-viewer-card {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .viewer-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .viewer-meta-title {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: 1.05rem;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .viewer-meta-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--matrix-green);
+      background: rgba(56, 183, 100, 0.1);
+      border: 1px solid rgba(56, 183, 100, 0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .output-box {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: #d1ded5;
+      background: #080c09;
+      border: 1px solid rgba(36, 52, 39, 0.7);
+      border-radius: 4px;
+      padding: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.55;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .output-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .output-box::-webkit-scrollbar-thumb {
+      background: #243427;
+      border-radius: 3px;
+    }
+
+    /* Botón de acción minimalista: Copiar */
+    .action-bar {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-copy-minimal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.84rem;
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      background: var(--bg-card);
+      color: #e6ede8;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy-minimal:hover {
+      border-color: var(--matrix-green);
+      color: var(--matrix-green);
+      background: var(--matrix-green-soft);
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.2);
+    }
+
+    .btn-copy-minimal.copied {
+      background: rgba(56, 183, 100, 0.15);
+      border-color: var(--matrix-green);
+      color: #72e89d;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 45px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Barra Superior -->
+    <nav class="top-nav">
+      <a href="index.html" class="back-btn">&larr; Prompt</a>
+    </nav>
+
+    <!-- 1. TÍTULO PRINCIPAL -->
+    <header class="header-section">
+      <h1><span class="icon">⚡</span> Prompts // El Primer Millón & Creación de Riqueza</h1>
+      <p>Configura tus variables en los bloques colapsables y selecciona la fase estratégica abajo. Se genera prellenado y listo para copiar en segundos.</p>
+    </header>
+
+    <!-- 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) -->
+    <section class="form-wrapper">
+      <div class="form-header-title">
+        <span>⚙ FORMULARIO DE VARIABLES RECOLECTADAS</span>
+      </div>
+
+      <div class="collapse-group">
+        
+        <!-- Bloque 1: Perfil General & Datos Base -->
+        <details class="form-section" open>
+          <summary class="section-summary">1. Perfil Personal, Ocupación & Horas Disponibles</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Edad</label>
+              <input type="text" id="var_edad" value="31 años">
+            </div>
+            <div class="field-item">
+              <label>Profesión / Ocupación Actual</label>
+              <input type="text" id="var_profesion" value="Ingeniero en Informática / Consultor de Automatizaciones IA">
+            </div>
+            <div class="field-item">
+              <label>Tiempo Disponible para Proyectos</label>
+              <input type="text" id="var_tiempo" value="3 a 4 horas al día (y fines de semana intensivos)">
+            </div>
+            <div class="field-item">
+              <label>Objetivo Financiero Central</label>
+              <input type="text" id="var_objetivo" value="Alcanzar un patrimonio neto de $1.000.000 USD y flujos recurrentes de $15.000 USD/mes">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 2: Balance Financiero (Ingresos, Activos, Deudas, Capital) -->
+        <details class="form-section">
+          <summary class="section-summary">2. Balance Financiero (Ingresos, Activos, Deudas & Capital)</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Ingresos Mensuales Netos</label>
+              <input type="text" id="var_ingresos" value="$3.200 USD / mes (salario fijo + consultorías independientes)">
+            </div>
+            <div class="field-item">
+              <label>Activos Actuales</label>
+              <input type="text" id="var_activos" value="$28.000 USD (fondos indexados ETF, liquidez bancaria y equipos de trabajo)">
+            </div>
+            <div class="field-item">
+              <label>Deudas Actuales</label>
+              <input type="text" id="var_deudas" value="$4.500 USD (crédito de consumo con tasa fija del 14% anual, sin deudas tóxicas de tarjeta)">
+            </div>
+            <div class="field-item">
+              <label>Capital Disponible Inmediato para Invertir</label>
+              <input type="text" id="var_capital" value="$8.000 USD listos para reinversión en proyectos o activos productivos">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 3: Habilidades, Activos Digitales & Ventaja Competitiva -->
+        <details class="form-section">
+          <summary class="section-summary">3. Habilidades Técnicas, Soft Skills & Ventaja Injusta</summary>
+          <div class="section-content">
+            <div class="field-item field-full">
+              <label>Habilidades Actuales & Experiencia</label>
+              <textarea id="var_habilidades">Desarrollo de software y arquitectura cloud (Python, JavaScript, SQL, AWS), creación de agentes y flujos de automatización con LLMs, diseño funcional UI/UX, gestión ágil de proyectos y venta consultiva técnica B2B.</textarea>
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 4: Hábitos, Fricciones & Cuellos de Botella -->
+        <details class="form-section">
+          <summary class="section-summary">4. Cuellos de Botella, Hábitos & Tolerancia al Riesgo</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Perfil de Riesgo</label>
+              <input type="text" id="var_perfil_riesgo" value="Moderado-Agresivo en negocios/capital humano, Conservador en colchón de seguridad">
+            </div>
+            <div class="field-item">
+              <label>Cuello de Botella Actual</label>
+              <input type="text" id="var_cuello_botella" value="Venta de tiempo por horas en lugar de empaquetar servicios en productos escalables">
+            </div>
+            <div class="field-item field-full">
+              <label>Hábitos Financieros Fuertes vs Fugas</label>
+              <textarea id="var_habitos_friccion">Hábitos que me enriquecen: Disciplina técnica, tasa de ahorro del 40%, lectura y aprendizaje constante.
+Hábitos que me empobrecen: Procrastinación en prospección activa de ventas y sobreoptimización técnica antes de validar en el mercado.</textarea>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- 3. VISOR MODULAR CON SELECTOR DROPDOWN -->
+    <section class="viewer-panel" id="viewerPanel">
+      <div class="selector-bar">
+        <label for="promptSelector" class="selector-label">Selecciona la Fase Estratégica a Visualizar:</label>
+        <select id="promptSelector" class="prompt-select-dropdown">
+          <option value="0">0. Prompt Maestro Integral: El Camino al Primer Millón</option>
+          <option value="1">1. Fase 1: Diagnóstico Completo & Principio de Pareto (80/20)</option>
+          <option value="2">2. Fase 2: Mapa de Riqueza & Matriz de Monetización Multidimensional</option>
+          <option value="3">3. Fase 3: Estrategia de Acumulación Escalonada ($10k a $1M)</option>
+          <option value="4">4. Fase 4: Máquina de Generar Dinero (Habilidades, IA & Activos Digitales)</option>
+          <option value="5">5. Fase 5: Plan de Implementación Táctico (30 Días a 3 Años)</option>
+          <option value="6">6. Fase 6 & 7: Errores Fatales, Trampas de Clase Media & Mentalidad Millonaria</option>
+        </select>
+      </div>
+
+      <!-- Tarjeta del Prompt Activo -->
+      <div class="prompt-viewer-card">
+        <div class="viewer-meta">
+          <span class="viewer-meta-title" id="displayPromptTitle">0. Prompt Maestro Integral: El Camino al Primer Millón</span>
+          <span class="viewer-meta-tag" id="displayPromptCategory">ESTRATEGIA PATRIMONIAL GLOBAL</span>
+        </div>
+
+        <pre class="output-box" id="activePromptOutput"></pre>
+
+        <div class="action-bar">
+          <button class="btn-copy-minimal" id="btnCopyPrompt" onclick="copyCurrentPrompt()">
+            📋 Copiar Prompt
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      MABRIX // WEALTH CREATION PROMPT ENGINE &bull; ERGONOMIC DARK INTERFACE
+    </footer>
+
+  </div>
+
+  <!-- Lógica JavaScript Dinámica y Reactiva con Auto-Scroll Suave -->
+  <script>
+    const promptSelector = document.getElementById('promptSelector');
+    const displayTitle = document.getElementById('displayPromptTitle');
+    const displayCategory = document.getElementById('displayPromptCategory');
+    const outputBox = document.getElementById('activePromptOutput');
+    const btnCopy = document.getElementById('btnCopyPrompt');
+    const viewerPanel = document.getElementById('viewerPanel');
+
+    const PROMPT_META = {
+      "0": { title: "0. Prompt Maestro Integral: El Camino al Primer Millón", category: "ESTRATEGIA PATRIMONIAL GLOBAL" },
+      "1": { title: "1. Fase 1: Diagnóstico Completo & Principio de Pareto (80/20)", category: "DIAGNÓSTICO PATRIMONIAL" },
+      "2": { title: "2. Fase 2: Mapa de Riqueza & Matriz de Monetización Multidimensional", category: "MAPA DE FLUJO & ACTIVOS" },
+      "3": { title: "3. Fase 3: Estrategia de Acumulación Escalonada ($10k a $1M)", category: "HITOS DE ESCALAMIENTO" },
+      "4": { title: "4. Fase 4: Máquina de Generar Dinero (Habilidades, IA & Activos)", category: "MÁQUINA DE INGRESOS" },
+      "5": { title: "5. Fase 5: Plan de Implementación Táctico (30 Días a 3 Años)", category: "ROADMAP CRONOLÓGICO" },
+      "6": { title: "6. Fase 6 & 7: Errores Fatales, Trampas & Mentalidad Millonaria", category: "BLINDAJE & MENTALIDAD" }
+    };
+
+    function buildPrompt(id) {
+      const edad = document.getElementById('var_edad').value.trim();
+      const profesion = document.getElementById('var_profesion').value.trim();
+      const ingresos = document.getElementById('var_ingresos').value.trim();
+      const activos = document.getElementById('var_activos').value.trim();
+      const deudas = document.getElementById('var_deudas').value.trim();
+      const tiempo = document.getElementById('var_tiempo').value.trim();
+      const capital = document.getElementById('var_capital').value.trim();
+      const habilidades = document.getElementById('var_habilidades').value.trim();
+      const objetivo = document.getElementById('var_objetivo').value.trim();
+
+      const perfilRiesgo = document.getElementById('var_perfil_riesgo').value.trim();
+      const cuelloBotella = document.getElementById('var_cuello_botella').value.trim();
+      const habitosFriccion = document.getElementById('var_habitos_friccion').value.trim();
+
+      const contextBlock = `Mi situación actual de base:
+- Edad: ${edad || '[No especificado]'}
+- Profesión: ${profesion || '[No especificado]'}
+- Ingresos mensuales netos: ${ingresos || '[No especificado]'}
+- Activos actuales: ${activos || '[No especificado]'}
+- Deudas: ${deudas || '[No especificado]'}
+- Tiempo disponible: ${tiempo || '[No especificado]'}
+- Capital disponible para invertir: ${capital || '[No especificado]'}
+- Habilidades actuales: ${habilidades || '[No especificado]'}
+- Objetivo financiero: ${objetivo || '[No especificado]'}
+- Perfil de riesgo: ${perfilRiesgo || '[No especificado]'}
+- Cuello de botella identificado: ${cuelloBotella || '[No especificado]'}`;
+
+      switch(id) {
+        case "0":
+          return `Eres una síntesis de las mentes de Warren Buffett, Charlie Munger, Ray Dalio, Naval Ravikant, Morgan Housel, Alex Hormozi, Peter Thiel y Andrew Carnegie.
+
+Tu misión es actuar como mi Asesor Financiero Estratégico Personal y crear un plan integral, implacable y matemáticamente sólido para multiplicar mi patrimonio lo más rápido posible de forma ética, legal y sostenible hasta alcanzar el primer millón de dólares.
+
+${contextBlock}
+
+Ejecuta el protocolo integral estructurado en 7 Fases Estratégicas:
+
+FASE 1 - DIAGNÓSTICO COMPLETO:
+Analiza a fondo mi situación financiera, mi capacidad de generar ingresos, mis activos y pasivos, mi perfil de riesgo, fortalezas y cuellos de botella. Separa con claridad los hábitos que me enriquecen de los que me empobrecen. Muestra el 20% de las acciones críticas que generarán el 80% de mis resultados patrimoniales.
+
+FASE 2 - MAPA DE RIQUEZA:
+Crea un plan articulado para generar ingresos inmediatos, aumentar mi ingreso principal, crear fuentes de ingresos extra, construir activos tangibles/digitales y generar ingresos recurrentes altamente escalables. Ordena cada oportunidad en una tabla evaluando: Facilidad (1-10), Rapidez de retorno, Inversión requerida, Potencial de ganancia y Escalabilidad.
+
+FASE 3 - ESTRATEGIA DE ACUMULACIÓN ESCALONADA:
+Desarrolla la hoja de ruta para cruzar cada umbral de patrimonio neto:
+1. $10.000 USD
+2. $50.000 USD
+3. $100.000 USD (El cruce crítico de Charlie Munger)
+4. $500.000 USD
+5. $1.000.000 USD
+Para cada etapa explica: Qué hacer, Qué evitar estrictamente, Dónde invertir tiempo, Dónde invertir dinero y Qué habilidades específicas desarrollar.
+
+FASE 4 - MÁQUINA DE GENERAR DINERO:
+Estructura ideas de alto apalancamiento:
+- Formas de monetizar mis habilidades actuales de inmediato.
+- Formas de generar ingresos utilizando inteligencia artificial y automatizaciones.
+- Formas de generar ingresos por internet y creación de activos digitales de propiedad intelectual o código.
+Para cada vía indica: Potencial de ganancia, Tiempo de retorno, Dificultad y Grado de escalabilidad.
+
+FASE 5 - PLAN DE IMPLEMENTACIÓN TÁCTICO:
+Desglosa mi plan cronológico a:
+- 30 días (victorias rápidas y orden de flujo).
+- 90 días (validación de oferta y primeras ventas de apalancamiento).
+- 1 año (consolidación de sistema y aceleración de ahorro/inversión).
+- 3 años (escalamiento a patrimonio de seis/siete cifras).
+Cada horizonte debe incluir metas cuantitativas de: Ingresos mensuales, Ganancias netas, Patrimonio acumulado e Inversiones activas.
+
+FASE 6 - ERRORES FATALES & BLINDAJE:
+Enumera los mayores errores que truncan el crecimiento: trampas comunes de la clase media (inflación del estilo de vida, hipotecas prematuras, parálisis por análisis), malas inversiones sin foso económico, gastos invisibles y sesgos limitantes sobre el dinero.
+
+FASE 7 - MENTALIDAD MILLONARIA:
+Explica con principios de primeros principios cómo piensan diferente los ultrarricos sobre el riesgo asimétrico, la detección de oportunidades, la toma de decisiones probabilísticas y la construcción acumulativa de riqueza por interés compuesto.`;
+
+        case "1":
+          return `Actúa con el rigor analítico de Charlie Munger y Ray Dalio.
+
+Mi contexto financiero:
+${contextBlock}
+- Fricciones de hábitos reportadas: ${habitosFriccion || '[No especificado]'}
+
+Ejecuta la FASE 1: DIAGNÓSTICO COMPLETO Y PRINCIPIO DE PARETO (80/20):
+1. Auditoría de Balance Personal: Calcula mi tasa de ahorro real, mi apalancamiento actual frente a pasivos y la solidez de mi liquidez de maniobra.
+2. Capacidad de Generación de Ingresos: Evalúa si mi perfil actual está monetizando su tiempo a valor de mercado o si estoy subcobrando y vendiendo horas sin apalancamiento.
+3. Desglose Quirúrgico de Fortalezas vs Cuellos de Botella: Identifica qué traba técnica, mental o comercial está frenando el despegue de mi flujo de caja.
+4. El Semáforo de Hábitos: Separa taxativamente los hábitos que aceleran mi patrimonio de aquellos gastos invisibles o comportamientos que me empobrecen.
+5. Filtro de Pareto (80/20): Entrega una lista de 3 acciones nucleares que, al implementarse esta misma semana, moverán el 80% de la aguja financiera de mi vida.`;
+
+        case "2":
+          return `Actúa como un estratega de monetización y arquitectura de modelos de negocio al estilo Alex Hormozi y Naval Ravikant.
+
+Mi contexto financiero:
+${contextBlock}
+
+Ejecuta la FASE 2: MAPA DE RIQUEZA Y DIVERSIFICACIÓN ESTRATÉGICA:
+Diseña una matriz diversificada que cubra los 6 motores de flujo patrimonial:
+1. Motor Inmediato: Plan para inyectar flujo de caja en menos de 14 días monetizando lo que ya sé hacer hoy.
+2. Motor Principal: Plan para incrementar mis ingresos laborales/consultoría en al menos un 50% en los próximos 6 meses.
+3. Motor Extra: 2 fuentes de ingresos secundarios independientes de mi empleo principal.
+4. Motor de Activos: Cómo estructurar activos reales (bursátiles, propiedades o participaciones societarias).
+5. Motor Recurrente: Creación de ofertas de membresía, retención o suscripción mensual (MRR).
+6. Motor de Riqueza Exponencial: Vías para construir activos de capital que no dependan linealmente de mis horas de esfuerzo.
+
+Organiza todas las oportunidades resultantes en una Tabla Comparativa que califique cada una por:
+- Facilidad de Ejecución (Baja / Media / Alta)
+- Rapidez de Retorno (Semanas / Meses)
+- Inversión de Capital Necesaria ($)
+- Potencial de Ganancia Anualizada
+- Escalabilidad (Factor de Apalancamiento)`;
+
+        case "3":
+          return `Actúa con la visión de largo plazo de Warren Buffett y el realismo táctico de Morgan Housel.
+
+Mi contexto de partida:
+${contextBlock}
+
+Ejecuta la FASE 3: ESTRATEGIA DE ACUMULACIÓN ESCALONADA ($10K A $1M):
+Charlie Munger sentenció: "Los primeros $100.000 son una pesadilla, pero debes conseguirlos aunque signifique no salir a cenar y caminar a todos lados".
+
+Construye la hoja de ruta desglosando los 5 escalones patrimoniales obligatorios:
+1. Tramo 1: De mi saldo actual a $10.000 USD (Construcción del colchón de maniobra y liquidación de deuda cara).
+2. Tramo 2: De $10.000 a $50.000 USD (Inversión en capital humano y primeros vehículos de interés compuesto).
+3. Tramo 3: De $50.000 a $100.000 USD (Consolidación de la masa crítica donde el capital comienza a trabajar por mí).
+4. Tramo 4: De $100.000 a $500.000 USD (Aceleración por reinversión de beneficios y apalancamiento comercial).
+5. Tramo 5: De $500.000 a $1.000.000 USD (El cruce del primer millón: preservación, asimetría positiva y diversificación).
+
+Para cada uno de los 5 tramos entrega una guía explícita con:
+* QUÉ HACER: La prioridad matemática y conductual absoluta.
+* QUÉ EVITAR: Las tentaciones más peligrosas de ese nivel socioeconómico.
+* DÓNDE INVERTIR TIEMPO: Hacia dónde orientar el esfuerzo diario.
+* DÓNDE INVERTIR DINERO: Asignación de activos recomendada (porcentajes en negocio propio, liquidez, renta fija, fondos indexados).
+* QUÉ HABILIDADES DESARROLLAR: La competencia clave que desbloquea el siguiente nivel.`;
+
+        case "4":
+          return `Actúa como un estratega en creación de riqueza digital y apalancamiento tecnológico con la mentalidad de Peter Thiel y Naval Ravikant (Apalancamiento sin permiso: Código, Contenido, Capital y Medios).
+
+Mis habilidades y recursos:
+${contextBlock}
+
+Ejecuta la FASE 4: MÁQUINA DE GENERAR DINERO:
+Estructura un portafolio de oportunidades accionables divididas en 5 categorías:
+1. 5 Formas de monetizar mis habilidades técnicas actuales con clientes de alto valor (High-Ticket).
+2. 5 Modelos de negocio o servicios apalancados con Inteligencia Artificial y agentes autónomos.
+3. 5 Formas de generar ingresos por internet comercializando soluciones a problemas específicos de nicho.
+4. 5 Activos digitales de alta propiedad intelectual (código reutilizable, templates estructurados, sistemas automatizados, micro-SaaS o productos de información).
+5. 5 Modelos de monetización altamente escalables que no requieran contratar decenas de empleados.
+
+Para cada una de las ideas destacadas, especifica:
+- Potencial de facturación mensual estimada.
+- Tiempo estimado para ver el primer retorno de inversión.
+- Barrera de entrada / Dificultad técnica.
+- Factor de apalancamiento (cómo desligar el tiempo trabajado de la ganancia obtenida).`;
+
+        case "5":
+          return `Actúa como un director de operaciones y planificador estratégico patrimonial al estilo Ray Dalio y Andrew Carnegie.
+
+Mis datos de partida:
+${contextBlock}
+
+Ejecuta la FASE 5: PLAN DE IMPLEMENTACIÓN TÁCTICO (ROADMAP TEMPORAL):
+Transforma la visión abstracta en un cronograma de ejecución inflexible con métricas verificables:
+
+1. Horizonte a 30 Días (Fase de Contención y Flujo Inicial):
+   - Metas numéricas de ingresos, ganancias y ahorro.
+   - Plan de acción semanal (Semana 1 a Semana 4).
+   - Acciones inmediatas para optimizar el capital disponible ($${capital || '8.000'}).
+
+2. Horizonte a 90 Días (Fase de Tracción y Validación de Mercado):
+   - Oferta empaquetada lista y primeras ventas cerradas.
+   - Hitos de ingresos recurrentes (MRR) y patrimonio neto.
+
+3. Horizonte a 1 Año (Fase de Aceleración y Escalamiento):
+   - Monto acumulado en inversiones y estado del balance personal.
+   - Nivel de diversificación alcanzado.
+
+4. Horizonte a 3 Años (Fase de Consolidación hacia las Siete Cifras):
+   - Estructura de activos productores de renta y valor patrimonial neto.
+
+Presenta cada horizonte con una tabla de indicadores clave:
+| Horizonte | Meta Ingresos/mes | Ganancia Neta | Patrimonio Acumulado | Inversiones Activas | Hito Principal de Ejecución |`;
+
+        case "6":
+          return `Actúa como un filósofo del dinero y analista de sesgos cognitivos en finanzas combinando los principios de Charlie Munger ("Invertir, siempre invertir: dime dónde voy a morir para nunca ir allí") y Morgan Housel ("La psicología del dinero").
+
+Mis datos personales:
+${contextBlock}
+
+Ejecuta de manera combinada la FASE 6 (ERRORES FATALES) y la FASE 7 (MENTALIDAD MILLONARIA):
+
+PARTE 1: ERRORES FATALES & TRAMPAS DE CLASE MEDIA:
+1. Las 5 trampas psicológicas más letales de la clase media que garantizan la mediocridad financiera (ej. inflación del estilo de vida, confundir activos con pasivos, dependencia de una sola fuente de ingresos, impaciencia).
+2. Malas inversiones comunes: En qué NO debo meter ni un solo dólar en mi etapa actual.
+3. Detección de gastos invisibles y sesgos culturales limitantes sobre la abundancia y el dinero.
+
+PARTE 2: INGENIERÍA DE MENTALIDAD MILLONARIA:
+Explica con principios rigurosos y ejemplos prácticos:
+1. Cómo piensan los ricos sobre el RIESGO: La asimetría positiva (arriesgar poco para ganar mucho vs arriesgar mucho por retornos mediocres).
+2. Cómo ven las OPORTUNIDADES: Pensar en términos de sistemas y ventajas competitivas duraderas (moats), no de modas pasajeras.
+3. Cómo toman DECISIONES: Pensamiento probabilístico y modelos mentales multidisciplinarios.
+4. Cómo construyen PATRIMONIO: El respeto inquebrantable por el interés compuesto y el tiempo como el activo supremo.
+5. 3 Mandamientos diarios de conducta financiera para mantener el foco durante los próximos 5 años.`;
+
+        default:
+          return "";
+      }
+    }
+
+    function renderActivePrompt(shouldScroll = false) {
+      const selectedId = promptSelector.value;
+      displayTitle.textContent = PROMPT_META[selectedId].title;
+      displayCategory.textContent = PROMPT_META[selectedId].category;
+      outputBox.textContent = buildPrompt(selectedId);
+
+      if (shouldScroll) {
+        viewerPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function copyCurrentPrompt() {
+      const textToCopy = outputBox.innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalHTML = btnCopy.innerHTML;
+        btnCopy.innerHTML = '✔ ¡Copiado!';
+        btnCopy.classList.add('copied');
+
+        setTimeout(() => {
+          btnCopy.innerHTML = originalHTML;
+          btnCopy.classList.remove('copied');
+        }, 1800);
+      }).catch(err => {
+        console.error('Error al copiar:', err);
+      });
+    }
+
+    // Al cambiar la opción en el selector, actualiza y realiza scroll suave al visor
+    promptSelector.addEventListener('change', () => {
+      renderActivePrompt(true);
+    });
+
+    // Al editar cualquier campo del formulario, actualiza el prompt en vivo sin mover la pantalla
+    const allInputs = document.querySelectorAll('.form-wrapper input, .form-wrapper textarea');
+    allInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        renderActivePrompt(false);
+      });
+    });
+
+    // Carga inicial
+    renderActivePrompt(false);
+  </script>
+</body>
+</html>

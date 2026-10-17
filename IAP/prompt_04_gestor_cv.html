@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mabrix // Prompts Gestor y Optimizador de CV</title>
+  
+  <!-- Tipografía ergonómica y técnica -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta ergonómica sin fatiga visual (Dark Mode Matrix Suave) */
+      --bg-dark: #070a08;
+      --bg-surface: #0f1611;
+      --bg-card: #151f18;
+      --bg-card-hover: #1b271f;
+      --border-color: #243427;
+      --border-accent: #34b35e;
+      
+      --text-main: #e6ede8;
+      --text-dim: #96a99b;
+      --text-muted: #607565;
+      
+      --matrix-green: #38b764;
+      --matrix-green-soft: rgba(56, 183, 100, 0.12);
+      --matrix-glow: rgba(56, 183, 100, 0.35);
+      
+      --code-bg: #0b100d;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 24px 16px 80px 16px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Navegación Superior */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'Fira Code', monospace;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--matrix-green);
+      border-color: var(--matrix-green);
+      background-color: var(--matrix-green-soft);
+    }
+
+    /* 1. TÍTULO PRINCIPAL */
+    .header-section {
+      margin-bottom: 24px;
+    }
+
+    .header-section h1 {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header-section h1 span.icon {
+      color: var(--matrix-green);
+    }
+
+    .header-section p {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+    }
+
+    /* 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) */
+    .form-wrapper {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 26px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-header-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--matrix-green);
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .collapse-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    details.form-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    details.form-section[open] {
+      border-color: var(--border-accent);
+    }
+
+    summary.section-summary {
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+      color: #d8e5dc;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    summary.section-summary:hover {
+      background: var(--bg-card-hover);
+      color: var(--matrix-green);
+    }
+
+    summary.section-summary::after {
+      content: "▸";
+      font-size: 1rem;
+      color: var(--matrix-green);
+      transition: transform 0.2s ease;
+    }
+
+    details[open] summary.section-summary::after {
+      transform: rotate(90deg);
+    }
+
+    .section-content {
+      padding: 16px;
+      background: var(--code-bg);
+      border-top: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .field-full {
+      grid-column: 1 / -1;
+    }
+
+    .field-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-item label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .field-item input, 
+    .field-item textarea {
+      background: #121914;
+      border: 1px solid var(--border-color);
+      color: #e6ede8;
+      font-size: 0.84rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field-item textarea {
+      min-height: 64px;
+      line-height: 1.45;
+      resize: vertical;
+    }
+
+    .field-item input:focus, 
+    .field-item textarea:focus {
+      border-color: var(--matrix-green);
+      box-shadow: 0 0 0 2px var(--matrix-green-soft);
+    }
+
+    /* 3. VISOR DE PROMPTS MODULAR CON SELECTOR DROPDOWN */
+    .viewer-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+      scroll-margin-top: 20px;
+    }
+
+    .selector-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .selector-label {
+      font-size: 0.8rem;
+      font-family: 'Fira Code', monospace;
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .prompt-select-dropdown {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--border-accent);
+      color: #ffffff;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .prompt-select-dropdown:focus {
+      box-shadow: 0 0 12px var(--matrix-glow);
+    }
+
+    /* Área de salida del prompt prellenado */
+    .prompt-viewer-card {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .viewer-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .viewer-meta-title {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: 1.05rem;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .viewer-meta-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--matrix-green);
+      background: rgba(56, 183, 100, 0.1);
+      border: 1px solid rgba(56, 183, 100, 0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .output-box {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: #d1ded5;
+      background: #080c09;
+      border: 1px solid rgba(36, 52, 39, 0.7);
+      border-radius: 4px;
+      padding: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.55;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .output-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .output-box::-webkit-scrollbar-thumb {
+      background: #243427;
+      border-radius: 3px;
+    }
+
+    /* Botón de acción minimalista: Copiar */
+    .action-bar {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-copy-minimal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.84rem;
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      background: var(--bg-card);
+      color: #e6ede8;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy-minimal:hover {
+      border-color: var(--matrix-green);
+      color: var(--matrix-green);
+      background: var(--matrix-green-soft);
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.2);
+    }
+
+    .btn-copy-minimal.copied {
+      background: rgba(56, 183, 100, 0.15);
+      border-color: var(--matrix-green);
+      color: #72e89d;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 45px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Barra Superior -->
+    <nav class="top-nav">
+      <a href="index.html" class="back-btn">&larr; Prompt</a>
+    </nav>
+
+    <!-- 1. TÍTULO PRINCIPAL -->
+    <header class="header-section">
+      <h1><span class="icon">⚡</span> Prompts // Optimización Estratégica de Currículum</h1>
+      <p>Configura tus variables en los bloques colapsables y selecciona el prompt que necesitas abajo. Se genera prellenado y listo para copiar en segundos.</p>
+    </header>
+
+    <!-- 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) -->
+    <section class="form-wrapper">
+      <div class="form-header-title">
+        <span>⚙ FORMULARIO DE VARIABLES RECOLECTADAS</span>
+      </div>
+
+      <div class="collapse-group">
+        
+        <!-- Bloque 1: Currículum Base & Datos de Carrera -->
+        <details class="form-section" open>
+          <summary class="section-summary">1. Currículum Base & Trayectoria Profesional</summary>
+          <div class="section-content">
+            <div class="field-item field-full">
+              <label>Currículum Actual Completo (Texto Plano)</label>
+              <textarea id="var_cv_actual" style="min-height: 110px;">CARLOS MORALES
+Ingeniero en Informática | Especialista en Automatización de Procesos e Integraciones IA
+
+EXPERIENCIA LABORAL
+• Líder Técnico de Operaciones Digitales - InnoTech Soluciones (2022 - Presente)
+  - Responsable de coordinar el equipo de desarrollo interno para plataformas web.
+  - Implementación de flujos de trabajo con APIs y LLMs para automatizar atención a usuarios.
+  - Gestión de infraestructura en la nube y mantenimiento preventivo de bases de datos.
+
+• Desarrollador de Software y Procesos - Grupo Logístico Sur (2019 - 2021)
+  - Desarrollo de módulos ERP para inventario y trazabilidad de pedidos.
+  - Creación de paneles en tiempo real para visualización de KPIs operativos.
+  - Capacitación al personal operativo en el uso de los nuevos sistemas.
+
+EDUCACIÓN
+• Licenciatura en Ciencias de la Computación / Ingeniería Informática (2014 - 2018)
+
+HABILIDADES TÉCNICAS
+• Python, JavaScript, SQL, Arquitectura Cloud (AWS/GCP), APIs REST, Git, Docker.</textarea>
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 2: Oferta Objetivo & Cargo Deseado -->
+        <details class="form-section">
+          <summary class="section-summary">2. Cargo Objetivo & Descripción de la Vacante</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Puesto o Cargo al que Postulas</label>
+              <input type="text" id="var_cargo_postulacion" value="Lead Solutions Architect / Gerente de Transformación Digital">
+            </div>
+            <div class="field-item">
+              <label>Cargo Senior de Alto Nivel de Referencia</label>
+              <input type="text" id="var_cargo_senior" value="Director de Tecnología (CTO) / Head of Engineering">
+            </div>
+            <div class="field-item field-full">
+              <label>Descripción Completa de la Oferta de Empleo / JD</label>
+              <textarea id="var_descripcion_oferta">Buscamos un Lead Solutions Architect con más de 5 años de experiencia liderando proyectos de transformación digital y automatización empresarial.
+
+Requisitos clave:
+- Experiencia demostrable en diseño e implementación de arquitecturas escalables en la nube (AWS/Azure) y pipelines de automatización con IA/ML.
+- Capacidad comprobada para liderar equipos multidisciplinarios y traducir requerimientos de negocio complejos en hojas de ruta técnicas ejecutables.
+- Dominio en optimización de costos de infraestructura cloud (FinOps), seguridad de datos y gobierno de APIs.
+- Excelentes habilidades de comunicación ejecutiva con stakeholders de nivel C y orientación estricta a resultados comerciales cuantificables.</textarea>
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 3: Resumen Profesional & Logros Cuantificables -->
+        <details class="form-section">
+          <summary class="section-summary">3. Resumen Profesional & Logros de Mayor Impacto</summary>
+          <div class="section-content">
+            <div class="field-item field-full">
+              <label>Resumen o Perfil Profesional Actual</label>
+              <textarea id="var_resumen_actual">Profesional de tecnología proactivo con experiencia en desarrollo de sistemas, automatización y liderazgo técnico. Apasionado por resolver problemas difíciles y ayudar a las empresas a ser más productivas mediante el uso de herramientas modernas.</textarea>
+            </div>
+            <div class="field-item field-full">
+              <label>Principales Logros Cuantificables / Hitos Clave</label>
+              <textarea id="var_logros_clave">• Reduje los tiempos de procesamiento de solicitudes de clientes en un 64% mediante la creación de un motor de enrutamiento automatizado con IA.
+• Ahorré $42,000 USD anuales en costos de infraestructura cloud tras reestructurar arquitecturas legadas a microservicios serverless.
+• Lideré la entrega a tiempo y con cero fallas críticas de 8 proyectos consecutivos de software coordinando a un equipo de 7 ingenieros.</textarea>
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 4: Situaciones Atípicas (Brechas, Giros o Cambios) -->
+        <details class="form-section">
+          <summary class="section-summary">4. Brechas Laborales, Transición o Cambio de Carrera</summary>
+          <div class="section-content">
+            <div class="field-item field-full">
+              <label>Explicación de tu Caso (Vacío, Giro de Rubro o Falta de Experiencia Directa)</label>
+              <textarea id="var_caso_especial">Tengo una brecha de 8 meses en 2021 tras desvincularme de mi anterior empresa, periodo en el que realicé certificaciones avanzadas en arquitectura cloud, desarrollé proyectos independientes de automatización como consultor freelance y reorienté mi perfil desde desarrollo tradicional hacia arquitectura de soluciones estratégicas.</textarea>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- 3. VISOR MODULAR CON SELECTOR DROPDOWN -->
+    <section class="viewer-panel" id="viewerPanel">
+      <div class="selector-bar">
+        <label for="promptSelector" class="selector-label">Selecciona el Prompt a Visualizar:</label>
+        <select id="promptSelector" class="prompt-select-dropdown">
+          <option value="1">1. Reconstrucción Completa del Currículum (ATS & Logros)</option>
+          <option value="2">2. Optimizador de Currículum para una Oferta Específica</option>
+          <option value="3">3. Piensa como un Reclutador: Resumen de Impacto en 5 Segundos</option>
+          <option value="4">4. Optimización de Palabras Clave y Densidad para ATS</option>
+          <option value="5">5. Reencuadre Estratégico de Vacíos Laborales y Cambios de Carrera</option>
+          <option value="6">6. Calibración de Tono Ejecutivo y Liderazgo de Alto Nivel</option>
+        </select>
+      </div>
+
+      <!-- Tarjeta del Prompt Activo -->
+      <div class="prompt-viewer-card">
+        <div class="viewer-meta">
+          <span class="viewer-meta-title" id="displayPromptTitle">1. Reconstrucción Completa del Currículum (ATS & Logros)</span>
+          <span class="viewer-meta-tag" id="displayPromptCategory">RECONSTRUCCIÓN & ATS</span>
+        </div>
+
+        <pre class="output-box" id="activePromptOutput"></pre>
+
+        <div class="action-bar">
+          <button class="btn-copy-minimal" id="btnCopyPrompt" onclick="copyCurrentPrompt()">
+            📋 Copiar Prompt
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      MABRIX // CV MANAGEMENT PROMPT ENGINE &bull; ERGONOMIC DARK INTERFACE
+    </footer>
+
+  </div>
+
+  <!-- Lógica JavaScript Dinámica y Reactiva con Auto-Scroll Suave -->
+  <script>
+    const promptSelector = document.getElementById('promptSelector');
+    const displayTitle = document.getElementById('displayPromptTitle');
+    const displayCategory = document.getElementById('displayPromptCategory');
+    const outputBox = document.getElementById('activePromptOutput');
+    const btnCopy = document.getElementById('btnCopyPrompt');
+    const viewerPanel = document.getElementById('viewerPanel');
+
+    const PROMPT_META = {
+      "1": { title: "1. Reconstrucción Completa del Currículum (ATS & Logros)", category: "RECONSTRUCCIÓN & ATS" },
+      "2": { title: "2. Optimizador de Currículum para una Oferta Específica", category: "ADAPTACIÓN A VACANTE" },
+      "3": { title: "3. Piensa como un Reclutador: Resumen de Impacto en 5 Segundos", category: "HOOK & CREDIBILIDAD" },
+      "4": { title: "4. Optimización de Palabras Clave y Densidad para ATS", category: "KEYWORD DENSITY" },
+      "5": { title: "5. Reencuadre Estratégico de Vacíos y Cambios de Carrera", category: "ALQUIMIA DE CARRERA" },
+      "6": { title: "6. Calibración de Tono Ejecutivo y Liderazgo de Alto Nivel", category: "TONO EJECUTIVO" }
+    };
+
+    function buildPrompt(id) {
+      const cvActual = document.getElementById('var_cv_actual').value.trim();
+      const cargoPostulacion = document.getElementById('var_cargo_postulacion').value.trim();
+      const cargoSenior = document.getElementById('var_cargo_senior').value.trim();
+      const descripcionOferta = document.getElementById('var_descripcion_oferta').value.trim();
+      const resumenActual = document.getElementById('var_resumen_actual').value.trim();
+      const logrosClave = document.getElementById('var_logros_clave').value.trim();
+      const casoEspecial = document.getElementById('var_caso_especial').value.trim();
+
+      switch(id) {
+        case "1":
+          return `Actúa como un experto en adquisición de talento y consultor ejecutivo de reclutamiento que ha auditado más de 1,000 currículums de alto nivel.
+
+Tu misión es reconstruir integralmente mi currículum para garantizar compatibilidad total con sistemas ATS (Applicant Tracking Systems), orientarlo a resultados de negocio y generar impacto inmediato en los reclutadores.
+
+Parámetros de la postulación:
+- Puesto objetivo al que aspiro: ${cargoPostulacion || '[No especificado]'}
+
+Mi currículum actual:
+"""
+${cvActual || '[Inserta aquí tu currículum]'}
+"""
+
+Instrucciones de transformación:
+1. Convierte cada responsabilidad genérica o tarea pasiva en un logro tangible utilizando la fórmula de Google: "Logré [X], medido por [Y], haciendo [Z]".
+2. Inicia cada viñeta con verbos de acción contundentes (ej. Diseñé, Implementé, Lideré, Optimicé, Aceleré, Reestructuré), eliminando muletillas pasivas como "responsable de" o "encargado de".
+3. Cuantifica con métricas estimadas o reales (porcentajes de eficiencia, ahorro de costes, facturación, volumen de usuarios, tiempos de entrega o retención de talento).
+4. Estructura el currículum con encabezados estandarizados para lectura limpia en motores ATS (Resumen Profesional, Experiencia Laboral, Competencias Técnicas & Metodologías, Educación & Certificaciones).`;
+
+        case "2":
+          return `Actúa como un especialista en selección técnica y estratega de posicionamiento profesional.
+
+Adapta y personaliza quirúrgicamente mi currículum para que encaje como un guante con la siguiente oferta de trabajo, sin inventar experiencia falsa pero maximizando la coincidencia semántica.
+
+Descripción de la oferta de empleo:
+"""
+${descripcionOferta || '[Inserta aquí la descripción completa de la vacante / Job Description]'}
+"""
+
+Mi currículum base:
+"""
+${cvActual || '[Inserta aquí tu currículum]'}
+"""
+
+Ejecuta el siguiente protocolo de adaptación:
+1. Reorganiza el orden de las secciones y viñetas para que los proyectos y competencias más relevantes para esta vacante aparezcan en el tercio superior de lectura.
+2. Reescribe los puntos clave de mi experiencia integrando naturalmente las habilidades y metodologías requeridas en la oferta.
+3. Incorpora las palabras clave esenciales y terminología técnica exacta presente en la descripción del puesto.
+4. Entrega al final un "Índice de Afinidad Estimado" (Match Score) y una lista de 3 posibles objeciones que un reclutador podría tener, junto a cómo responderlas con solidez en la entrevista.`;
+
+        case "3":
+          return `Actúa como el Gerente de Contratación (Hiring Manager) más exigente para la posición de: ${cargoPostulacion || '[No especificado]'}.
+
+Reescribe el resumen profesional de mi currículum con el objetivo de que, en una lectura rápida de menos de 5 segundos, decidas inmediatamente convocarme a una entrevista técnica.
+
+Contexto actual de mi perfil:
+- Resumen actual:
+"""
+${resumenActual || '[Inserta aquí tu resumen actual]'}
+"""
+
+- Logros y fortalezas más destacados:
+"""
+${logrosClave || '[Inserta aquí tus logros clave]'}
+"""
+
+Criterios de redacción:
+1. Condensa la propuesta de valor en un párrafo contundente de 3 a 4 líneas de alta densidad informativa.
+2. Destaca cifras de impacto, credibilidad profesional comprobable y factor de diferenciación frente al promedio de candidatos.
+3. Elimina adjetivos vacíos ("proactivo", "orientado a resultados", "trabajador en equipo") y reemplázalos por evidencia concreta de rendimiento.
+4. Genera 3 versiones del resumen:
+   * Versión A: Enfoque Directo y Ejecutivo.
+   * Versión B: Enfoque Técnico y de Especialización Profunda.
+   * Versión C: Enfoque de Liderazgo y Transformación de Negocio.`;
+
+        case "4":
+          return `Actúa como un ingeniero de optimización de algoritmos ATS y analista semántico de reclutamiento.
+
+Audita y optimiza la densidad de palabras clave de mi currículum para que supere los filtros automatizados sin que la lectura humana suene forzada o artificial.
+
+Oferta de empleo de referencia:
+"""
+${descripcionOferta || '[Inserta aquí la descripción de la vacante]'}
+"""
+
+Mi currículum:
+"""
+${cvActual || '[Inserta aquí tu currículum]'}
+"""
+
+Procedimiento estructurado:
+1. Extracción y categorización: Extrae y clasifica en una tabla los términos críticos de la oferta divididos en: Habilidades Duras (Hard Skills), Herramientas/Software, Metodologías y Habilidades de Liderazgo/Blandas.
+2. Integración contextual: Reubica e inserta de forma orgánica las palabras clave faltantes dentro de las viñetas de mi experiencia y sección de habilidades.
+3. Tabla de control de cambios: Entrega una tabla comparativa indicando: Palabra clave agregada + Dónde se ubicó en el CV + Por qué es crucial para el algoritmo ATS.`;
+
+        case "5":
+          return `Actúa como un consultor sénior de carrera y coach de reinvención profesional.
+
+Reestructura estratégicamente mi currículum para neutralizar puntos vulnerables (períodos sin empleo formal, cambios frecuentes de empresa, falta de experiencia lineal directa o transición completa de sector) y transformarlos en ventajas competitivas y fortalezas de madurez profesional.
+
+Detalle de mi caso particular:
+"""
+${casoEspecial || '[Explica brevemente tu brecha temporal, cambio de rubro o situación atípica]'}
+"""
+
+Mi currículum actual:
+"""
+${cvActual || '[Inserta aquí tu currículum]'}
+"""
+
+Objetivo: Postular exitosamente a: ${cargoPostulacion || '[No especificado]'}.
+
+Estrategia requerida:
+1. Formato híbrido/funcional: Diseña una estructura que priorice competencias transferibles, proyectos de alto impacto y resultados por encima de una cronología lineal fría.
+2. Narrativa de la brecha o transición: Reencuadra el período atípico destacando desarrollo de competencias, formación autodidacta, consultorías independientes o maduración de criterio.
+3. Argumentario para entrevista: Redacta una respuesta de 45 segundos, segura y transparente, para responder la inevitable pregunta del reclutador: "¿A qué se debió este cambio / vacío en tu trayectoria?".`;
+
+        case "6":
+          return `Actúa como un consultor de Headhunting y búsqueda de ejecutivos C-Level.
+
+Reescribe mi currículum calibrándolo con un tono de liderazgo de alto nivel, visión estratégica e impacto directo en el balance de negocio, posicionándome como un profesional sénior de primera línea preparado para asumir el rol de: ${cargoSenior || '[No especificado]'}.
+
+Mi currículum base:
+"""
+${cvActual || '[Inserta aquí tu currículum]'}
+"""
+
+Pautas de calibración ejecutiva:
+1. Purga de lenguaje operacional: Sustituye el vocabulario de ejecución técnica por terminología de dirección estratégica (ej. en vez de "programé un sistema", usar "diseñé la arquitectura y goberné el ciclo de vida de la plataforma").
+2. Triangulación de impacto: Asegúrate de que cada experiencia demuestre liderazgo de personas, gestión de presupuestos o recursos, y aportación cuantificable a los objetivos estratégicos de la compañía.
+3. Eliminación de expresiones tímidas o reactivas: Erradica cualquier matiz de inseguridad ("asistí en", "ayudé a", "fui parte de") y refuérzalo con propiedad y autoridad profesional.
+4. Entrega la versión pulida en formato Markdown listo para presentar a comités de selección ejecutiva.`;
+
+        default:
+          return "";
+      }
+    }
+
+    function renderActivePrompt(shouldScroll = false) {
+      const selectedId = promptSelector.value;
+      displayTitle.textContent = PROMPT_META[selectedId].title;
+      displayCategory.textContent = PROMPT_META[selectedId].category;
+      outputBox.textContent = buildPrompt(selectedId);
+
+      if (shouldScroll) {
+        viewerPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function copyCurrentPrompt() {
+      const textToCopy = outputBox.innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalHTML = btnCopy.innerHTML;
+        btnCopy.innerHTML = '✔ ¡Copiado!';
+        btnCopy.classList.add('copied');
+
+        setTimeout(() => {
+          btnCopy.innerHTML = originalHTML;
+          btnCopy.classList.remove('copied');
+        }, 1800);
+      }).catch(err => {
+        console.error('Error al copiar:', err);
+      });
+    }
+
+    // Al cambiar la opción en el selector, actualiza y realiza scroll suave al visor
+    promptSelector.addEventListener('change', () => {
+      renderActivePrompt(true);
+    });
+
+    // Al editar cualquier campo del formulario, actualiza el prompt en vivo sin mover la pantalla
+    const allInputs = document.querySelectorAll('.form-wrapper input, .form-wrapper textarea');
+    allInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        renderActivePrompt(false);
+      });
+    });
+
+    // Carga inicial
+    renderActivePrompt(false);
+  </script>
+</body>
+</html>

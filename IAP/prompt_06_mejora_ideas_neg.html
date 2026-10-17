@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mabrix // Prompts Pitch Deck & Validación de Ideas de Negocio</title>
+  
+  <!-- Tipografía ergonómica y técnica -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta ergonómica sin fatiga visual (Dark Mode Matrix Suave) */
+      --bg-dark: #070a08;
+      --bg-surface: #0f1611;
+      --bg-card: #151f18;
+      --bg-card-hover: #1b271f;
+      --border-color: #243427;
+      --border-accent: #34b35e;
+      
+      --text-main: #e6ede8;
+      --text-dim: #96a99b;
+      --text-muted: #607565;
+      
+      --matrix-green: #38b764;
+      --matrix-green-soft: rgba(56, 183, 100, 0.12);
+      --matrix-glow: rgba(56, 183, 100, 0.35);
+      
+      --code-bg: #0b100d;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 24px 16px 80px 16px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Navegación Superior */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'Fira Code', monospace;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--matrix-green);
+      border-color: var(--matrix-green);
+      background-color: var(--matrix-green-soft);
+    }
+
+    /* 1. TÍTULO PRINCIPAL */
+    .header-section {
+      margin-bottom: 24px;
+    }
+
+    .header-section h1 {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header-section h1 span.icon {
+      color: var(--matrix-green);
+    }
+
+    .header-section p {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+    }
+
+    /* 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) */
+    .form-wrapper {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 26px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-header-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--matrix-green);
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .collapse-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    details.form-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    details.form-section[open] {
+      border-color: var(--border-accent);
+    }
+
+    summary.section-summary {
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+      color: #d8e5dc;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    summary.section-summary:hover {
+      background: var(--bg-card-hover);
+      color: var(--matrix-green);
+    }
+
+    summary.section-summary::after {
+      content: "▸";
+      font-size: 1rem;
+      color: var(--matrix-green);
+      transition: transform 0.2s ease;
+    }
+
+    details[open] summary.section-summary::after {
+      transform: rotate(90deg);
+    }
+
+    .section-content {
+      padding: 16px;
+      background: var(--code-bg);
+      border-top: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .field-full {
+      grid-column: 1 / -1;
+    }
+
+    .field-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-item label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .field-item input, 
+    .field-item textarea {
+      background: #121914;
+      border: 1px solid var(--border-color);
+      color: #e6ede8;
+      font-size: 0.84rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field-item textarea {
+      min-height: 64px;
+      line-height: 1.45;
+      resize: vertical;
+    }
+
+    .field-item input:focus, 
+    .field-item textarea:focus {
+      border-color: var(--matrix-green);
+      box-shadow: 0 0 0 2px var(--matrix-green-soft);
+    }
+
+    /* 3. VISOR DE PROMPTS MODULAR CON SELECTOR DROPDOWN */
+    .viewer-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+      scroll-margin-top: 20px;
+    }
+
+    .selector-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .selector-label {
+      font-size: 0.8rem;
+      font-family: 'Fira Code', monospace;
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .prompt-select-dropdown {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--border-accent);
+      color: #ffffff;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .prompt-select-dropdown:focus {
+      box-shadow: 0 0 12px var(--matrix-glow);
+    }
+
+    /* Área de salida del prompt prellenado */
+    .prompt-viewer-card {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .viewer-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .viewer-meta-title {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: 1.05rem;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .viewer-meta-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--matrix-green);
+      background: rgba(56, 183, 100, 0.1);
+      border: 1px solid rgba(56, 183, 100, 0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .output-box {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: #d1ded5;
+      background: #080c09;
+      border: 1px solid rgba(36, 52, 39, 0.7);
+      border-radius: 4px;
+      padding: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.55;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .output-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .output-box::-webkit-scrollbar-thumb {
+      background: #243427;
+      border-radius: 3px;
+    }
+
+    /* Botón de acción minimalista: Copiar */
+    .action-bar {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-copy-minimal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.84rem;
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      background: var(--bg-card);
+      color: #e6ede8;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy-minimal:hover {
+      border-color: var(--matrix-green);
+      color: var(--matrix-green);
+      background: var(--matrix-green-soft);
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.2);
+    }
+
+    .btn-copy-minimal.copied {
+      background: rgba(56, 183, 100, 0.15);
+      border-color: var(--matrix-green);
+      color: #72e89d;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 45px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Barra Superior -->
+    <nav class="top-nav">
+      <a href="index.html" class="back-btn">&larr; Prompt</a>
+    </nav>
+
+    <!-- 1. TÍTULO PRINCIPAL -->
+    <header class="header-section">
+      <h1><span class="icon">⚡</span> Prompts // Mejora de Ideas de Negocio & Pitch Decks</h1>
+      <p>Configura los detalles de tu idea o presentación en los bloques colapsables y selecciona el prompt estratégico que necesitas abajo. Se genera prellenado y listo para copiar en segundos.</p>
+    </header>
+
+    <!-- 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) -->
+    <section class="form-wrapper">
+      <div class="form-header-title">
+        <span>⚙ FORMULARIO DE VARIABLES RECOLECTADAS</span>
+      </div>
+
+      <div class="collapse-group">
+        
+        <!-- Bloque 1: Idea Central, Problema & Solución -->
+        <details class="form-section" open>
+          <summary class="section-summary">1. Idea de Negocio, Problema & Solución de Base</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Nombre del Proyecto / Producto</label>
+              <input type="text" id="var_nombre_proyecto" value="OpsFlow AI - Plataforma de Automatización de Operaciones B2B">
+            </div>
+            <div class="field-item">
+              <label>Cliente Objetivo / Buyer Persona</label>
+              <input type="text" id="var_cliente_objetivo" value="Directores de Operaciones y CTOs en medianas empresas de logística y servicios">
+            </div>
+            <div class="field-item field-full">
+              <label>Idea de Negocio Resumida</label>
+              <textarea id="var_idea_negocio">Un software SaaS modular que conecta los ERPs y hojas de cálculo de medianas empresas con agentes autónomos de IA para automatizar el procesamiento de pedidos, conciliación documental y reportes ejecutivos en tiempo real sin requerir desarrolladores internos.</textarea>
+            </div>
+            <div class="field-item field-full">
+              <label>El Problema Crítico (Pain Point Ineludible)</label>
+              <textarea id="var_problema_critico">Los equipos operativos pierden más de 18 horas a la semana copiando manualmente datos entre sistemas legados desconectados, lo que provoca una tasa de error del 7% y demoras críticas en la facturación y despacho.</textarea>
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 2: Propuesta de Valor, Mercado & Modelo de Negocio -->
+        <details class="form-section">
+          <summary class="section-summary">2. Modelo de Negocio, Tracción & Mercado (TAM/SAM)</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Modelo de Ingresos (Monetización)</label>
+              <input type="text" id="var_modelo_ingresos" value="SaaS B2B por suscripción mensual (Planes de $450 a $1,800 USD/mes según volumen)">
+            </div>
+            <div class="field-item">
+              <label>Tamaño de Mercado Estimado (TAM / SAM)</label>
+              <input type="text" id="var_tam_sam" value="Mercado regional de $850M USD en Latam; mercado inicial focalizado (SAM) de $65M USD">
+            </div>
+            <div class="field-item field-full">
+              <label>Tracción Actual / Validación Real</label>
+              <textarea id="var_traccion">3 clientes piloto corporativos activos, $4,200 USD de MRR, reducción comprobada del 70% en tiempo de procesamiento y lista de espera con 24 empresas preinscritas.</textarea>
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 3: Estructura Actual de la Presentación -->
+        <details class="form-section">
+          <summary class="section-summary">3. Borrador o Estructura Actual de Diapositivas</summary>
+          <div class="section-content">
+            <div class="field-item field-full">
+              <label>Estructura / Lista de Diapositivas Planificadas</label>
+              <textarea id="var_estructura_actual" style="min-height: 90px;">Slide 1: Portada y Visión general
+Slide 2: El problema de la ineficiencia operativa
+Slide 3: Nuestra solución con OpsFlow AI
+Slide 4: Demostración técnica del producto y arquitectura
+Slide 5: Tamaño de mercado y competencia
+Slide 6: Modelo de negocio y precios
+Slide 7: Tracción y métricas clave
+Slide 8: Equipo fundador y experiencia
+Slide 9: Ronda de inversión solicitada y uso de fondos</textarea>
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 4: Datos a Validar & Evidencia para Inversores -->
+        <details class="form-section">
+          <summary class="section-summary">4. Ventaja Competitiva, Riesgos & Capital Solicitado</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Capital Solicitado / Ask</label>
+              <input type="text" id="var_ronda_capital" value="$250,000 USD por el 10% de equity (Ronda Pre-Seed / Seed)">
+            </div>
+            <div class="field-item">
+              <label>Foso Defensivo / Ventaja Competitiva (Moat)</label>
+              <input type="text" id="var_foso_defensivo" value="Conectores propietarios con sistemas ERP legados de Latam y algoritmos de validación">
+            </div>
+            <div class="field-item field-full">
+              <label>Mayor Riesgo Percibido / Punto Ciego</label>
+              <input type="text" id="var_riesgos" value="Ciclo de venta B2B corporativo más largo de lo previsto (3 a 5 meses) y reticencia al cambio del personal de mandos medios.">
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- 3. VISOR MODULAR CON SELECTOR DROPDOWN -->
+    <section class="viewer-panel" id="viewerPanel">
+      <div class="selector-bar">
+        <label for="promptSelector" class="selector-label">Selecciona el Prompt a Visualizar:</label>
+        <select id="promptSelector" class="prompt-select-dropdown">
+          <option value="1">1. De Idea a Presentación (Estructura Diapositiva por Diapositiva)</option>
+          <option value="2">2. Construye la Narrativa (Arco Dramático del Problema a la Oferta)</option>
+          <option value="3">3. Un Titular por Diapositiva (Títulos Argumentativos Autónomos)</option>
+          <option value="4">4. Los Puntos de Apoyo (Evidencia Concreta sin Invenciones)</option>
+          <option value="5">5. Diseña el Flujo (Auditoría de Transiciones y Vacíos Lógicos)</option>
+          <option value="6">6. Lista para Inversores (Due Diligence & Preguntas Incómodas)</option>
+          <option value="7">7. El Plan Final (Matriz Maestra de Ejecución del Pitch Deck)</option>
+        </select>
+      </div>
+
+      <!-- Tarjeta del Prompt Activo -->
+      <div class="prompt-viewer-card">
+        <div class="viewer-meta">
+          <span class="viewer-meta-title" id="displayPromptTitle">1. De Idea a Presentación (Estructura Diapositiva por Diapositiva)</span>
+          <span class="viewer-meta-tag" id="displayPromptCategory">ESTRUCTURA & PITCH</span>
+        </div>
+
+        <pre class="output-box" id="activePromptOutput"></pre>
+
+        <div class="action-bar">
+          <button class="btn-copy-minimal" id="btnCopyPrompt" onclick="copyCurrentPrompt()">
+            📋 Copiar Prompt
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      MABRIX // PITCH DECK STRATEGY PROMPT ENGINE &bull; ERGONOMIC DARK INTERFACE
+    </footer>
+
+  </div>
+
+  <!-- Lógica JavaScript Dinámica y Reactiva con Auto-Scroll Suave -->
+  <script>
+    const promptSelector = document.getElementById('promptSelector');
+    const displayTitle = document.getElementById('displayPromptTitle');
+    const displayCategory = document.getElementById('displayPromptCategory');
+    const outputBox = document.getElementById('activePromptOutput');
+    const btnCopy = document.getElementById('btnCopyPrompt');
+    const viewerPanel = document.getElementById('viewerPanel');
+
+    const PROMPT_META = {
+      "1": { title: "1. De Idea a Presentación (Estructura Diapositiva por Diapositiva)", category: "ESTRUCTURA & PITCH" },
+      "2": { title: "2. Construye la Narrativa (Arco Dramático sin Relleno)", category: "STORYTELLING ESTRATÉGICO" },
+      "3": { title: "3. Un Titular por Diapositiva (Títulos Argumentativos)", category: "TITULARES & NARRATIVA" },
+      "4": { title: "4. Los Puntos de Apoyo (Evidencia Real y Visuales)", category: "EVIDENCIA & SOPORTE" },
+      "5": { title: "5. Diseña el Flujo (Optimización de Ritmo y Lógica)", category: "DIAGNÓSTICO DE FLUJO" },
+      "6": { title: "6. Lista para Inversores (Blindaje ante Due Diligence)", category: "DUE DILIGENCE" },
+      "7": { title: "7. El Plan Final (Matriz Maestra de Presentación)", category: "BLUEPRINT MAESTRO" }
+    };
+
+    function buildPrompt(id) {
+      const nombre = document.getElementById('var_nombre_proyecto').value.trim();
+      const cliente = document.getElementById('var_cliente_objetivo').value.trim();
+      const idea = document.getElementById('var_idea_negocio').value.trim();
+      const problema = document.getElementById('var_problema_critico').value.trim();
+
+      const modelo = document.getElementById('var_modelo_ingresos').value.trim();
+      const mercado = document.getElementById('var_tam_sam').value.trim();
+      const traccion = document.getElementById('var_traccion').value.trim();
+
+      const estructura = document.getElementById('var_estructura_actual').value.trim();
+      const capital = document.getElementById('var_ronda_capital').value.trim();
+      const foso = document.getElementById('var_foso_defensivo').value.trim();
+      const riesgos = document.getElementById('var_riesgos').value.trim();
+
+      switch(id) {
+        case "1":
+          return `Actúa como un estratega senior de presentaciones comerciales y especialista en diseño de pitch decks para startups e iniciativas corporativas de alto nivel.
+
+Convierte mi idea de negocio en una estructura rigurosa, convincente y ordenada diapositiva por diapositiva:
+
+Contexto de la idea de negocio:
+- Nombre del proyecto: ${nombre || '[No especificado]'}
+- Cliente objetivo: ${cliente || '[No especificado]'}
+- Descripción de la idea: ${idea || '[No especificado]'}
+- Problema central que resolvemos: ${problema || '[No especificado]'}
+- Modelo de negocio y tracción: ${modelo || '[No especificado]'} | ${traccion || '[No especificado]'}
+
+Para cada diapositiva de la presentación, define de forma precisa:
+1. Número y Propósito estratégico de la diapositiva (por qué existe y qué función cumple en la venta de la idea).
+2. Titular activo y convincente (que comunique una conclusión, no un rótulo genérico).
+3. Mensaje principal (la única idea clave que debe quedar grabada en la mente de la audiencia).
+4. Puntos de apoyo (2 a 3 argumentos fácticos, métricas o casos de uso).
+5. Qué debe haber entendido y validado la audiencia antes de avanzar a la diapositiva siguiente.
+
+Construye una narrativa lógica, fluida e implacable en lugar de una simple enumeración dispersa de datos.`;
+
+        case "2":
+          return `Actúa como un consultor en storytelling estratégico de negocios y narrativa persuasiva para comités de inversión.
+
+Crea la historia central de mi presentación de negocio, asegurando que avance con tensión dramática y coherencia lógica desde el dolor del cliente hasta la propuesta final, sin rellenos vacíos ni rodeos conceptuales.
+
+Datos clave del caso:
+- Idea de negocio: ${idea || '[No especificado]'}
+- Dolor o problema urgente en el mercado: ${problema || '[No especificado]'}
+- Perfil del cliente afectado: ${cliente || '[No especificado]'}
+- Oportunidad de mercado y modelo de monetización: ${mercado || '[No especificado]'} | ${modelo || '[No especificado]'}
+- Propuesta final / Qué estamos pidiendo: ${capital || '[No especificado]'}
+
+Tu entrega debe estructurar la secuencia lógica más sólida respondiendo:
+1. El Problema Oculto: Cuál es la fricción real y por qué las soluciones existentes son insuficientes o costosas.
+2. Por qué importa AHORA (Why Now?): Qué cambio tecnológico, regulatorio o de mercado hace urgente esta solución hoy.
+3. La Solución y la Revelación: Cómo resolvemos el problema de raíz con una propuesta 10x superior.
+4. La Oportunidad de Negocio: Por qué esto representa un negocio altamente rentable, defendible y escalable.
+5. La Propuesta Final: El llamado a la acción concreto (alianza comercial o capital de inversión).
+
+Indica para cada sección qué debe quedar demostrado taxativamente y elimina sin piedad cualquier información accesoria que debilite la fuerza del argumento central.`;
+
+        case "3":
+          return `Actúa como un redactor publicitario senior y especialista en comunicación ejecutiva.
+
+Crea un titular convincente, memorable y asertivo para cada diapositiva de mi presentación, siguiendo el principio de "encabezados temáticos activos" utilizado por firmas como McKinsey o Sequoia.
+
+Contexto de la presentación:
+- Idea de negocio: ${nombre || '[Nombre]'} - ${idea || '[No especificado]'}
+- Estructura prevista de diapositivas:
+"""
+${estructura || '[Inserta aquí la lista o índice de diapositivas]'}
+"""
+
+Reglas estrictas de redacción:
+1. Cada titular debe comunicar la idea principal y forzar el avance de la historia por sí mismo.
+2. Prohibido utilizar títulos genéricos de etiqueta (evita estrictamente "Problema", "Solución", "Mercado", "Competencia", "Modelo de Negocio" o "Equipo").
+3. Sustituye cada rótulo por una afirmación factual concreta (ej. en vez de "Problema", redactar: "Las medianas empresas pierden un 7% de margen operativo reconciliando datos a mano").
+4. El conjunto de todos los titulares debe ser tan específico y coherente que cualquier lector comprenda la narrativa completa y la tesis de negocio leyendo únicamente los títulos de corrida en 60 segundos.`;
+
+        case "4":
+          return `Actúa como un analista de inteligencia de negocios e investigación de mercado.
+
+Mi objetivo es dotar de evidencia real e incontestable a cada diapositiva de mi presentación para respaldar su titular y convencer a escépticos.
+
+Contexto del proyecto:
+- Idea y problema: ${idea || '[No especificado]'} | ${problema || '[No especificado]'}
+- Tracción y modelo: ${traccion || '[No especificado]'} | ${modelo || '[No especificado]'}
+- Estructura de la presentación:
+"""
+${estructura || '[Inserta tu índice o diapositivas]'}
+"""
+
+Para cada diapositiva, entrega:
+1. Entre 2 y 4 puntos de apoyo concisos y contundentes que expliquen o demuestren la veracidad del titular.
+2. La recomendación del tipo exacto de evidencia que mejor fortalece el punto: dato duro de la industria, benchmark comparativo, testimonio/conocimiento profundo del cliente (insight), cálculo unitario (Unit Economics) o elemento visual (gráfico de barras, diagrama de arquitectura, comparativa antes/después).
+3. Regla de rigor absoluto: No inventes estadísticas, porcentajes ni evidencias falsas. Marca explícitamente entre corchetes [REQUIERE DATOS REALES DE MI PARTE] señalando exactamente qué cifra o comprobación debo aportar yo de mis métricas operativas.`;
+
+        case "5":
+          return `Actúa como un director de oratoria y editor de presentaciones para rondas de capital.
+
+Revisa críticamente la presentación que tengo planificada para depurar y optimizar el orden secuencial de las diapositivas, logrando la máxima claridad mental y asegurando que la audiencia no se desconecte en ningún momento.
+
+Estructura actual que tengo pensada:
+"""
+${estructura || '[Pega aquí tu lista o índice actual de diapositivas]'}
+"""
+Idea y foco del negocio:
+- ${nombre || '[Proyecto]'}: ${idea || '[No especificado]'}
+- Mayor riesgo / punto crítico: ${riesgos || '[No especificado]'}
+
+Ejecuta la siguiente auditoría de flujo:
+1. Detección de fallas estructurales:
+   * Repeticiones innecesarias o redundancias conceptuales.
+   * Vacíos en la lógica argumental (saltos donde se asume algo que no se ha demostrado previamente).
+   * Transiciones débiles o inconexas entre diapositivas adyacentes.
+   * Momentos exactos de fatiga cognitiva donde la audiencia podría perder el hilo o dudar de la viabilidad.
+2. Secuencia recomendada reordenada: Presenta la lista definitiva y optimizada de diapositivas, acompañando cada una con UNA SOLA FRASE que justifique por qué ocupa esa posición exacta en el ritmo de la historia.`;
+
+        case "6":
+          return `Actúa como un socio general (General Partner) de un fondo de Venture Capital o inversor ángel altamente riguroso.
+
+Revisa la propuesta de mi negocio como si fueras a tomar la decisión de invertir $${capital || 'capital'} de tu propio patrimonio. Tu labor es encontrar todas las grietas, omisiones y cabos sueltos antes de que me siente frente a un comité real.
+
+Detalles de la propuesta:
+- Idea de negocio: ${nombre || '[Proyecto]'} - ${idea || '[No especificado]'}
+- Problema y mercado: ${problema || '[No especificado]'} | ${mercado || '[No especificado]'}
+- Modelo de ingresos y tracción: ${modelo || '[No especificado]'} | ${traccion || '[No especificado]'}
+- Foso competitivo y riesgos conocidos: ${foso || '[No especificado]'} | ${riesgos || '[No especificado]'}
+
+Realiza una auditoría implacable y lista las preguntas no resueltas en los siguientes ejes críticos:
+1. Problema y Solución: ¿Por qué no lo resuelve el software existente? ¿Qué tan doloroso es realmente el problema?
+2. Tamaño de Mercado y Timing: ¿El mercado es suficientemente grande para justificar retornos exponenciales? ¿Por qué ahora?
+3. Competencia y Foso Defensivo (Moat): ¿Qué impide a un competidor con más presupuesto copiar esto en 6 meses?
+4. Modelo de Negocio y Unit Economics: Costo de Adquisición de Clientes (CAC), Valor de Vida (LTV) y márgenes brutos.
+5. Tracción y Crecimiento: ¿La tracción mostrada es repetible y predecible?
+6. Riesgos de Ejecución y Proyecciones Financieras: Supuestos irreales en el flujo de caja.
+
+Para cada vacío detectado, indícame qué información o evidencia documental específica debería añadir para blindar la presentación. Prohibido inventar datos: indícame dónde debo levantar la información.`;
+
+        case "7":
+          return `Actúa como el diseñador y estratega maestro de pitch decks.
+
+Combina todos los elementos analizados previamente en el PLAN MAESTRO FINAL DE LA PRESENTACIÓN. Cada diapositiva debe tener una función incuestionable y sumar directamente a la tesis global de inversión y negocio.
+
+Contexto del proyecto:
+- Nombre y concepto: ${nombre || '[Proyecto]'} - ${idea || '[No especificado]'}
+- Problema central: ${problema || '[No especificado]'}
+- Modelo de negocio y tracción: ${modelo || '[No especificado]'} | ${traccion || '[No especificado]'}
+- Ronda o propuesta final: ${capital || '[No especificado]'}
+
+Entrega una matriz completa y estructurada donde cada diapositiva detalle estrictamente:
+• Diapositiva N°: [Número y categoría funcional]
+• Titular Activo: [Frase asertiva que cuenta la historia]
+• Mensaje Principal: [Idea nuclear que debe comprenderse en 5 segundos]
+• Puntos de Apoyo: [2 o 3 evidencias o argumentos concisos]
+• Elemento Visual Recomendado: [Mockup, gráfico de crecimiento, diagrama de arquitectura, tabla comparativa, etc.]
+• Datos / Métricas Requeridas: [Cifras cuantitativas que sustentan la diapositiva]
+• Frase de Transición: [El puente verbal exacto para conectar con la siguiente diapositiva sin silencios incómodos]
+
+Mantén el contenido conciso, centrado en el arco narrativo y con el más alto estándar de rigor corporativo.`;
+
+        default:
+          return "";
+      }
+    }
+
+    function renderActivePrompt(shouldScroll = false) {
+      const selectedId = promptSelector.value;
+      displayTitle.textContent = PROMPT_META[selectedId].title;
+      displayCategory.textContent = PROMPT_META[selectedId].category;
+      outputBox.textContent = buildPrompt(selectedId);
+
+      if (shouldScroll) {
+        viewerPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function copyCurrentPrompt() {
+      const textToCopy = outputBox.innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalHTML = btnCopy.innerHTML;
+        btnCopy.innerHTML = '✔ ¡Copiado!';
+        btnCopy.classList.add('copied');
+
+        setTimeout(() => {
+          btnCopy.innerHTML = originalHTML;
+          btnCopy.classList.remove('copied');
+        }, 1800);
+      }).catch(err => {
+        console.error('Error al copiar:', err);
+      });
+    }
+
+    // Al cambiar la opción en el selector, actualiza y realiza scroll suave al visor
+    promptSelector.addEventListener('change', () => {
+      renderActivePrompt(true);
+    });
+
+    // Al editar cualquier campo del formulario, actualiza el prompt en vivo sin mover la pantalla
+    const allInputs = document.querySelectorAll('.form-wrapper input, .form-wrapper textarea');
+    allInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        renderActivePrompt(false);
+      });
+    });
+
+    // Carga inicial
+    renderActivePrompt(false);
+  </script>
+</body>
+</html>

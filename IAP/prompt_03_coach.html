@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mabrix // Prompts Coach de Mentalidad y Desarrollo Personal</title>
+  
+  <!-- Tipografía ergonómica y técnica -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta ergonómica sin fatiga visual (Dark Mode Matrix Suave) */
+      --bg-dark: #070a08;
+      --bg-surface: #0f1611;
+      --bg-card: #151f18;
+      --bg-card-hover: #1b271f;
+      --border-color: #243427;
+      --border-accent: #34b35e;
+      
+      --text-main: #e6ede8;
+      --text-dim: #96a99b;
+      --text-muted: #607565;
+      
+      --matrix-green: #38b764;
+      --matrix-green-soft: rgba(56, 183, 100, 0.12);
+      --matrix-glow: rgba(56, 183, 100, 0.35);
+      
+      --code-bg: #0b100d;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 24px 16px 80px 16px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Navegación Superior */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'Fira Code', monospace;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--matrix-green);
+      border-color: var(--matrix-green);
+      background-color: var(--matrix-green-soft);
+    }
+
+    /* 1. TÍTULO PRINCIPAL */
+    .header-section {
+      margin-bottom: 24px;
+    }
+
+    .header-section h1 {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header-section h1 span.icon {
+      color: var(--matrix-green);
+    }
+
+    .header-section p {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+    }
+
+    /* 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) */
+    .form-wrapper {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 26px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-header-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--matrix-green);
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .collapse-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    details.form-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    details.form-section[open] {
+      border-color: var(--border-accent);
+    }
+
+    summary.section-summary {
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+      color: #d8e5dc;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    summary.section-summary:hover {
+      background: var(--bg-card-hover);
+      color: var(--matrix-green);
+    }
+
+    summary.section-summary::after {
+      content: "▸";
+      font-size: 1rem;
+      color: var(--matrix-green);
+      transition: transform 0.2s ease;
+    }
+
+    details[open] summary.section-summary::after {
+      transform: rotate(90deg);
+    }
+
+    .section-content {
+      padding: 16px;
+      background: var(--code-bg);
+      border-top: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .field-full {
+      grid-column: 1 / -1;
+    }
+
+    .field-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-item label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .field-item input, 
+    .field-item textarea {
+      background: #121914;
+      border: 1px solid var(--border-color);
+      color: #e6ede8;
+      font-size: 0.84rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field-item textarea {
+      min-height: 58px;
+      line-height: 1.4;
+      resize: vertical;
+    }
+
+    .field-item input:focus, 
+    .field-item textarea:focus {
+      border-color: var(--matrix-green);
+      box-shadow: 0 0 0 2px var(--matrix-green-soft);
+    }
+
+    /* 3. VISOR DE PROMPTS MODULAR CON SELECTOR DROPDOWN */
+    .viewer-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+      scroll-margin-top: 20px;
+    }
+
+    .selector-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .selector-label {
+      font-size: 0.8rem;
+      font-family: 'Fira Code', monospace;
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .prompt-select-dropdown {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--border-accent);
+      color: #ffffff;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .prompt-select-dropdown:focus {
+      box-shadow: 0 0 12px var(--matrix-glow);
+    }
+
+    /* Área de salida del prompt prellenado */
+    .prompt-viewer-card {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .viewer-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .viewer-meta-title {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      font-size: 1.05rem;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .viewer-meta-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--matrix-green);
+      background: rgba(56, 183, 100, 0.1);
+      border: 1px solid rgba(56, 183, 100, 0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .output-box {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: #d1ded5;
+      background: #080c09;
+      border: 1px solid rgba(36, 52, 39, 0.7);
+      border-radius: 4px;
+      padding: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.55;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .output-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .output-box::-webkit-scrollbar-thumb {
+      background: #243427;
+      border-radius: 3px;
+    }
+
+    /* Botón de acción minimalista: Copiar */
+    .action-bar {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-copy-minimal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.84rem;
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      background: var(--bg-card);
+      color: #e6ede8;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy-minimal:hover {
+      border-color: var(--matrix-green);
+      color: var(--matrix-green);
+      background: var(--matrix-green-soft);
+      box-shadow: 0 0 10px rgba(56, 183, 100, 0.2);
+    }
+
+    .btn-copy-minimal.copied {
+      background: rgba(56, 183, 100, 0.15);
+      border-color: var(--matrix-green);
+      color: #72e89d;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 45px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Barra Superior -->
+    <nav class="top-nav">
+      <a href="index.html" class="back-btn">&larr; Prompt</a>
+    </nav>
+
+    <!-- 1. TÍTULO PRINCIPAL -->
+    <header class="header-section">
+      <h1><span class="icon">⚡</span> Prompts // Coach de Mentalidad & Crecimiento</h1>
+      <p>Configura tus variables en los bloques colapsables y selecciona el prompt que necesitas abajo. Se genera prellenado y listo para copiar en segundos.</p>
+    </header>
+
+    <!-- 2. FORMULARIO UNIFICADO DE RECOLECCIÓN (SECCIONES COLAPSABLES) -->
+    <section class="form-wrapper">
+      <div class="form-header-title">
+        <span>⚙ FORMULARIO DE VARIABLES RECOLECTADAS</span>
+      </div>
+
+      <div class="collapse-group">
+        
+        <!-- Bloque 1: Diagnóstico de Bloqueos & Autosabotaje -->
+        <details class="form-section" open>
+          <summary class="section-summary">1. Bloqueos Mentales & Autosabotaje</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Área de Enfoque</label>
+              <input type="text" id="var_area_bloqueo" value="Carrera profesional y proyectos independientes">
+            </div>
+            <div class="field-item">
+              <label>Síntoma o Comportamiento Recurrente</label>
+              <input type="text" id="var_sintoma_bloqueo" value="Postergo el lanzamiento de mis servicios por sentir que falta preparación">
+            </div>
+            <div class="field-item field-full">
+              <label>Resultado o Meta Deseada que se ve Frenada</label>
+              <input type="text" id="var_meta_bloqueo" value="Conseguir mis primeros clientes directos y validar mi oferta este mes">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 2: Propósito, Valores & Curiosidad -->
+        <details class="form-section">
+          <summary class="section-summary">2. Propósito de Vida & Estado de Flujo</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Intereses Actuales / Curiosidades</label>
+              <input type="text" id="var_intereses" value="Automatización de procesos con IA, diseño minimalista, psicología del rendimiento">
+            </div>
+            <div class="field-item">
+              <label>Actividades en Estado de Flujo (Flow)</label>
+              <input type="text" id="var_flow" value="Resolver problemas complejos de arquitectura lógica y estructurar sistemas claros">
+            </div>
+            <div class="field-item field-full">
+              <label>Valores Innegociables o Causas</label>
+              <input type="text" id="var_valores" value="Autonomía, excelencia técnica, honestidad radical e impacto medible en las personas">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 3: Pensamientos Negativos & Situación Específica -->
+        <details class="form-section">
+          <summary class="section-summary">3. Patrones Negativos & Reestructuración Cognitiva</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Situación Concreta Desencadenante</label>
+              <input type="text" id="var_situacion_tcc" value="Presenté una propuesta de proyecto y el cliente tardó 3 días en responder">
+            </div>
+            <div class="field-item">
+              <label>Emoción o Sensación Predominante</label>
+              <input type="text" id="var_emocion_tcc" value="Incertidumbre, sensación de insuficiencia y parálisis preventiva">
+            </div>
+            <div class="field-item field-full">
+              <label>Pensamiento Automático Típico</label>
+              <input type="text" id="var_pensamiento_auto" value="'Seguramente consideraron que la propuesta era mala o poco profesional'">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 4: Estancamiento & Toma de Decisiones -->
+        <details class="form-section">
+          <summary class="section-summary">4. Estancamiento Actual & Decisión Latente</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Área de Estancamiento</label>
+              <input type="text" id="var_area_estancamiento" value="Escalamiento laboral / transición a consultoría independiente">
+            </div>
+            <div class="field-item">
+              <label>Manifestación del Estancamiento</label>
+              <input type="text" id="var_manifestacion_estancamiento" value="Invierto semanas optimizando detalles irrelevantes sin tomar la decisión clave">
+            </div>
+            <div class="field-item field-full">
+              <label>Decisión Difícil que Vengo Postergando</label>
+              <input type="text" id="var_decision_pendiente" value="Definir mi nicho específico y comunicarlo públicamente sin miedo a cerrarme puertas">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 5: Habilidades Ocultas & Trayectoria -->
+        <details class="form-section">
+          <summary class="section-summary">5. Trayectoria, Pasiones & Talentos Ocultos</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Experiencias Laborales / Académicas</label>
+              <input type="text" id="var_trayectoria" value="Gestión de proyectos técnicos, redacción estructurada, coordinación de equipos">
+            </div>
+            <div class="field-item">
+              <label>Pasatiempos o Proyectos No Remunerados</label>
+              <input type="text" id="var_pasatiempos" value="Diseño de flujos en Notion, análisis de datos de fitness y curaduría de prompts">
+            </div>
+            <div class="field-item field-full">
+              <label>Lo que Resuelvo Fácil y a Otros les Cuesta</label>
+              <input type="text" id="var_facilidad" value="Sintetizar información caótica y transformarla en pasos ejecutables claros y simples">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 6: Sobrecarga, Estrés & Ansiedad -->
+        <details class="form-section">
+          <summary class="section-summary">6. Descompresión de Estrés & Fuentes de Ansiedad</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Disparador Concreto de Sobrecarga</label>
+              <input type="text" id="var_estres_fuente" value="Acumulación de entregas simultáneas y sensación de falta de control del tiempo">
+            </div>
+            <div class="field-item">
+              <label>Manifestación Física o Mental</label>
+              <input type="text" id="var_estres_sintoma" value="Tensión en hombros y mandíbula, hiperactividad mental antes de dormir">
+            </div>
+            <div class="field-item field-full">
+              <label>Horario o Momento más Crítico de Estrés</label>
+              <input type="text" id="var_estres_momento" value="Media tarde (16:00 a 18:00 hrs) al revisar la bandeja de entrada">
+            </div>
+          </div>
+        </details>
+
+        <!-- Bloque 7: Debilidades & Rasgos Conflictivos -->
+        <details class="form-section">
+          <summary class="section-summary">7. Reencuadre de Debilidades en Fortalezas</summary>
+          <div class="section-content">
+            <div class="field-item">
+              <label>Debilidad o Rasgo Conflictivo</label>
+              <input type="text" id="var_debilidad" value="Sobreanálisis y perfeccionismo obsesivo con los detalles">
+            </div>
+            <div class="field-item">
+              <label>Contexto donde Suele Perjudicarte</label>
+              <input type="text" id="var_debilidad_contexto" value="Fases iniciales de proyectos donde se necesita velocidad y no perfección">
+            </div>
+            <div class="field-item field-full">
+              <label>Costo Asociado a este Rasgo</label>
+              <input type="text" id="var_debilidad_costo" value="Retrasos en entregas y desgaste mental innecesario antes de publicar">
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- 3. VISOR MODULAR CON SELECTOR DROPDOWN -->
+    <section class="viewer-panel" id="viewerPanel">
+      <div class="selector-bar">
+        <label for="promptSelector" class="selector-label">Selecciona el Prompt a Visualizar:</label>
+        <select id="promptSelector" class="prompt-select-dropdown">
+          <option value="1">1. Diagnóstico de Puntos Ciegos y Autosabotaje</option>
+          <option value="2">2. Constructor de Declaración de Propósito e Ikigai</option>
+          <option value="3">3. Reestructuración Cognitiva y Desactivación de Bucles Mentales</option>
+          <option value="4">4. Protocolo de Desbloqueo y Decisión Táctica</option>
+          <option value="5">5. Auditoría de Habilidades Ocultas y Capital Invisible</option>
+          <option value="6">6. Descompresión de Estrés y Mapeo Causal de Ansiedad</option>
+          <option value="7">7. Reencuadre Alquímico: Transformación de Debilidad en Fortaleza</option>
+        </select>
+      </div>
+
+      <!-- Tarjeta del Prompt Activo -->
+      <div class="prompt-viewer-card">
+        <div class="viewer-meta">
+          <span class="viewer-meta-title" id="displayPromptTitle">1. Diagnóstico de Puntos Ciegos y Autosabotaje</span>
+          <span class="viewer-meta-tag" id="displayPromptCategory">MENTALIDAD & BLOQUEOS</span>
+        </div>
+
+        <pre class="output-box" id="activePromptOutput"></pre>
+
+        <div class="action-bar">
+          <button class="btn-copy-minimal" id="btnCopyPrompt" onclick="copyCurrentPrompt()">
+            📋 Copiar Prompt
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      MABRIX // COACHING PROMPT ENGINE &bull; ERGONOMIC DARK INTERFACE
+    </footer>
+
+  </div>
+
+  <!-- Lógica JavaScript Dinámica y Reactiva con Auto-Scroll Suave -->
+  <script>
+    const promptSelector = document.getElementById('promptSelector');
+    const displayTitle = document.getElementById('displayPromptTitle');
+    const displayCategory = document.getElementById('displayPromptCategory');
+    const outputBox = document.getElementById('activePromptOutput');
+    const btnCopy = document.getElementById('btnCopyPrompt');
+    const viewerPanel = document.getElementById('viewerPanel');
+
+    const PROMPT_META = {
+      "1": { title: "1. Diagnóstico de Puntos Ciegos y Autosabotaje", category: "MENTALIDAD & BLOQUEOS" },
+      "2": { title: "2. Constructor de Declaración de Propósito e Ikigai", category: "PROPÓSITO & VALORES" },
+      "3": { title: "3. Reestructuración Cognitiva y Desactivación de Bucles", category: "TERAPIA COGNITIVO-CONDUCTUAL" },
+      "4": { title: "4. Protocolo de Desbloqueo y Decisión Táctica", category: "DECISIÓN & DESESTANCAMIENTO" },
+      "5": { title: "5. Auditoría de Habilidades Ocultas y Capital Invisible", category: "TALENTOS LATENTES" },
+      "6": { title: "6. Descompresión de Estrés y Mapeo Causal de Ansiedad", category: "BIENESTAR EMOCIONAL" },
+      "7": { title: "7. Reencuadre Alquímico: Debilidad en Fortaleza", category: "ALQUIMIA DE FORTALEZAS" }
+    };
+
+    function buildPrompt(id) {
+      const areaBloqueo = document.getElementById('var_area_bloqueo').value.trim();
+      const sintomaBloqueo = document.getElementById('var_sintoma_bloqueo').value.trim();
+      const metaBloqueo = document.getElementById('var_meta_bloqueo').value.trim();
+
+      const intereses = document.getElementById('var_intereses').value.trim();
+      const flow = document.getElementById('var_flow').value.trim();
+      const valores = document.getElementById('var_valores').value.trim();
+
+      const situacionTcc = document.getElementById('var_situacion_tcc').value.trim();
+      const emocionTcc = document.getElementById('var_emocion_tcc').value.trim();
+      const pensamientoAuto = document.getElementById('var_pensamiento_auto').value.trim();
+
+      const areaEstancamiento = document.getElementById('var_area_estancamiento').value.trim();
+      const manifestacionEstancamiento = document.getElementById('var_manifestacion_estancamiento').value.trim();
+      const decisionPendiente = document.getElementById('var_decision_pendiente').value.trim();
+
+      const trayectoria = document.getElementById('var_trayectoria').value.trim();
+      const pasatiempos = document.getElementById('var_pasatiempos').value.trim();
+      const facilidad = document.getElementById('var_facilidad').value.trim();
+
+      const estresFuente = document.getElementById('var_estres_fuente').value.trim();
+      const estresSintoma = document.getElementById('var_estres_sintoma').value.trim();
+      const estresMomento = document.getElementById('var_estres_momento').value.trim();
+
+      const debilidad = document.getElementById('var_debilidad').value.trim();
+      const debilidadContexto = document.getElementById('var_debilidad_contexto').value.trim();
+      const debilidadCosto = document.getElementById('var_debilidad_costo').value.trim();
+
+      switch(id) {
+        case "1":
+          return `Actúa como un coach de alto rendimiento y analista cognitivo especializado en sesgos inconscientes. Mi objetivo es identificar y desmantelar los bloqueos invisibles que actualmente frenan mi avance.
+
+Contexto inicial de mi situación:
+- Área de enfoque: ${areaBloqueo || '[No especificado]'}
+- Comportamiento o síntoma recurrente: ${sintomaBloqueo || '[No especificado]'}
+- Resultado o meta deseada: ${metaBloqueo || '[No especificado]'}
+
+Realiza este proceso en dos etapas:
+1. Fase de indagación: Hazme 5 preguntas quirúrgicas e incómodas, diseñadas para exponer mis suposiciones implícitas, ganancias secundarias (el beneficio inconsciente de quedarme donde estoy) y contradicciones entre mis deseos y mis conductas. No avances al análisis hasta que te responda.
+2. Fase de espejo: Una vez que te responda, elabora un reporte estructurado que contenga:
+   * Creencia nuclear limitante: La regla no escrita que rige mi comportamiento actual.
+   * Ganancia secundaria: De qué me está protegiendo este bloqueo (miedo al fracaso, juicio social, pérdida de identidad, etc.).
+   * Reencuadre cognitivo: Una perspectiva factual y objetiva para reemplazar la narrativa anterior.
+   * Micro-acción de ruptura: Un experimento conductual ejecutable en menos de 48 horas para desafiar el bloqueo.`;
+
+        case "2":
+          return `Actúa como un mentor estratégico de vida y carrera utilizando el modelo Ikigai y el enfoque de fortalezas de carácter (VIA). Deseo construir una declaración de propósito operativa y alineada con mi identidad.
+
+Contexto inicial:
+- Mis intereses y temas recurrentes de curiosidad: ${intereses || '[No especificado]'}
+- Actividades donde experimento estado de flujo (flow): ${flow || '[No especificado]'}
+- Valores innegociables o causas que me movilizan: ${valores || '[No especificado]'}
+
+Instrucciones:
+1. Formúlame 4 preguntas reflexivas para triangular la intersección entre: lo que domino con facilidad, lo que el entorno valora/necesita y lo que me energiza de manera sostenible.
+2. Una vez que te responda, genera:
+   * 3 variantes de Declaración de Propósito (Formato: Verbo de impacto + A quién sirvo + A través de qué medio + Resultado medible).
+   * 3 Principios de Decisión: Filtros rápidos para discernir qué proyectos aceptar o rechazar según este propósito.`;
+
+        case "3":
+          return `Actúa como un especialista clínico en Terapia Cognitivo-Conductual (TCC) y Terapia Racional Emotiva Conductual (TREC). Ayúdame a auditar y reestructurar un ciclo repetitivo de pensamiento automático o autosabotaje.
+
+Contexto del evento:
+- Situación desencadenante: ${situacionTcc || '[No especificado]'}
+- Emoción o sensación predominante: ${emocionTcc || '[No especificado]'}
+- Pensamiento automático inicial: ${pensamientoAuto || '[No especificado]'}
+
+Desarrolla el siguiente análisis paso a paso:
+1. Detección de distorsiones: Identifica los sesgos presentes en mi interpretación (catastrofismo, pensamiento todo-o-nada, lectura de mente, personalización o razonamiento emocional).
+2. Cuestionamiento socrático: Plantea 3 preguntas de contrastación de evidencia empírica (¿Qué pruebas reales tengo a favor y en contra de este pensamiento?).
+3. Pensamiento alternativo adaptativo: Reescribe la situación con una afirmación realista, sin positivismo tóxico, orientada a la agencia personal.
+4. Técnica de anclaje inmediato: Describe un ejercicio somático o conductual de 2 minutos para interrumpir la rumiación aquí y ahora.`;
+
+        case "4":
+          return `Actúa como un consultor estratégico y coach de toma de decisiones. Me encuentro en una meseta de parálisis por análisis o inercia.
+
+Situación de estancamiento:
+- Área afectada: ${areaEstancamiento || '[No especificado]'}
+- Síntomas y manifestación: ${manifestacionEstancamiento || '[No especificado]'}
+- Decisión o cambio postergado: ${decisionPendiente || '[No especificado]'}
+
+Tu tarea:
+1. Guíame a través de un diagnóstico rápido haciéndome 3 preguntas puntuales para aislar:
+   * El costo real de la inacción proyectado a 6 meses.
+   * La creencia oculta o miedo que justifica demorar esta decisión.
+2. Con base en mis respuestas, entrega:
+   * Diagnóstico de raíz: Si el bloqueo es por falta de claridad, fatiga por decisión, perfeccionismo o desalineación de metas.
+   * Regla de decisión: Un marco mental aplicable (ej. Regla del 70%, Análisis del peor escenario reversible).
+   * Paso Mínimo Viable (PMV): Una sola acción atómica para ejecutar hoy que reduzca la fricción y rompa la inercia.`;
+
+        case "5":
+          return `Actúa como un cazador de talento ejecutivo y estratega de desarrollo profesional. Ayúdame a descubrir ventajas competitivas y habilidades subestimadas acumuladas a lo largo de mi trayectoria.
+
+Datos de base:
+- Experiencias laborales/académicas previas: ${trayectoria || '[No especificado]'}
+- Pasatiempos o proyectos no remunerados: ${pasatiempos || '[No especificado]'}
+- Cosas que resuelvo rápido y que a otros les cuestan: ${facilidad || '[No especificado]'}
+
+Procedimiento:
+1. Hazme 4 preguntas de rastreo diseñadas para identificar "habilidades secundarias o invisibles" (ej. sintetizar información dispersa, mediar conflictos tácitos, intuición lógica o diseño funcional).
+2. Tras recibir mis respuestas, identifica y desglosa:
+   * 3 Talentos latentes de alto apalancamiento: Nombre específico de la habilidad + evidencia de cómo ya la he ejercido.
+   * Casos de aplicación práctica: Dónde y cómo monetizar o utilizar este talento en el mercado actual o en mis proyectos.`;
+
+        case "6":
+          return `Actúa como un facilitador de regulación emocional y analista de bienestar fundamentado en neurociencia y psicología práctica. Mantén un tono neutro, empático, claro y aterrizado.
+
+Situación actual de sobrecarga:
+- Fuente o disparador de tensión: ${estresFuente || '[No especificado]'}
+- Manifestación física / cognitiva: ${estresSintoma || '[No especificado]'}
+- Ventana o momento crítico de alerta: ${estresMomento || '[No especificado]'}
+
+Estructura de la respuesta:
+1. Diferenciación de la fuente: Analiza si la causa raíz proviene de sobrecarga cognitiva, amenaza percibida al control/seguridad, conflicto interpersonal o desbalance fisiológico (sueño/fatiga).
+2. Círculo de control (Modelo Estoico):
+   * Lo que depende 100% de mí en este momento exacto.
+   * Lo que está fuera de mi control y debo soltar o delegar.
+3. Plan de intervención en 3 pasos graduales:
+   * Paso Inmediato (0 a 15 min): Reset fisiológico (respiración diafragmática o vaciado mental por escrito).
+   * Paso Táctico (próximas 24 horas): Una conversación pendiente o ajuste de límites.
+   * Paso Preventivo (semanal): Pauta de contención para evitar que el disparador se repita.`;
+
+        case "7":
+          return `Actúa como un psicólogo organizacional y experto en diseño de fortalezas. Utiliza el principio del "reencuadre funcional" para evaluar una aparente debilidad o rasgo conflictivo.
+
+Información sobre el rasgo:
+- Debilidad o característica recurrente: ${debilidad || '[No especificado]'}
+- Contextos donde me ha perjudicado: ${debilidadContexto || '[No especificado]'}
+- Costo o fricción recurrente: ${debilidadCosto || '[No especificado]'}
+
+Desarrolla el análisis bajo los siguientes puntos:
+1. Deconstrucción del rasgo: ¿Cuál es la capacidad cognitiva, perceptiva o instintiva oculta detrás de este comportamiento?
+2. El entorno óptimo: En qué contextos específicos (tipos de rol, proyectos o dinámicas) este rasgo se convierte en una ventaja crítica o un superpoder.
+3. Casos y precedentes reales: Cita 1 o 2 ejemplos históricos, empresariales o fundamentados en la psicología donde este rasgo exacto fue el motor de éxito.
+4. Manual de calibración: Qué disparadores debo vigilar para evitar que el rasgo se degrade a defecto, y qué regla práctica me permite canalizarlo como fortaleza consciente.`;
+
+        default:
+          return "";
+      }
+    }
+
+    function renderActivePrompt(shouldScroll = false) {
+      const selectedId = promptSelector.value;
+      displayTitle.textContent = PROMPT_META[selectedId].title;
+      displayCategory.textContent = PROMPT_META[selectedId].category;
+      outputBox.textContent = buildPrompt(selectedId);
+
+      if (shouldScroll) {
+        viewerPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function copyCurrentPrompt() {
+      const textToCopy = outputBox.innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalHTML = btnCopy.innerHTML;
+        btnCopy.innerHTML = '✔ ¡Copiado!';
+        btnCopy.classList.add('copied');
+
+        setTimeout(() => {
+          btnCopy.innerHTML = originalHTML;
+          btnCopy.classList.remove('copied');
+        }, 1800);
+      }).catch(err => {
+        console.error('Error al copiar:', err);
+      });
+    }
+
+    // Al cambiar la opción en el selector, actualiza y realiza scroll suave al visor
+    promptSelector.addEventListener('change', () => {
+      renderActivePrompt(true);
+    });
+
+    // Al editar cualquier campo del formulario, actualiza el prompt en vivo sin mover la pantalla
+    const allInputs = document.querySelectorAll('.form-wrapper input, .form-wrapper textarea');
+    allInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        renderActivePrompt(false);
+      });
+    });
+
+    // Carga inicial
+    renderActivePrompt(false);
+  </script>
+</body>
+</html>
