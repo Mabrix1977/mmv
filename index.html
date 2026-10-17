@@ -1,170 +1,364 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mauricio Muñoz V. | Perfil Profesional</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
-        
-        body { 
-            font-family: 'Rajdhani', sans-serif;
-            background-color: #060b13;
-            color: #e2e8f0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mabrix // System Portal</title>
+  <!-- Google Fonts: tipografía monoespaciada para terminal cibernética -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&family=Orbitron:wght@500;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #050805;
+      --matrix-green: #00ff41;
+      --matrix-green-glow: rgba(0, 255, 65, 0.45);
+      --matrix-dim: #008f11;
+      --matrix-bright: #adffb0;
+      --panel-bg: rgba(6, 18, 10, 0.75);
+      --card-border: rgba(0, 255, 65, 0.3);
+    }
 
-        .cyber-card {
-            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-            border: 1px solid #0ea5e9;
-            box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .photo-frame {
-            position: relative;
-            border: 2px solid #22d3ee;
-            padding: 4px;
-        }
+    body {
+      background-color: var(--bg-dark);
+      color: #e0ffe5;
+      font-family: 'Fira Code', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
 
-        .photo-frame::before, .photo-frame::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #22d3ee;
-        }
+    /* Fondo animado lluvia Matrix */
+    #matrix-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.28;
+      pointer-events: none;
+    }
 
-        .photo-frame::before { top: -5px; left: -5px; border-right: 0; border-bottom: 0; }
-        .photo-frame::after { bottom: -5px; right: -5px; border-left: 0; border-top: 0; }
+    /* Efecto líneas de escaneo CRT sutil */
+    .scanline-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 1;
+      pointer-events: none;
+    }
 
-        .neon-line {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
-            box-shadow: 0 0 8px #22d3ee;
-        }
+    /* Contenedor central */
+    .portal-container {
+      position: relative;
+      z-index: 2;
+      width: 90%;
+      max-width: 950px;
+      margin: 40px auto;
+      padding: 35px 25px;
+      background: var(--panel-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      box-shadow: 0 0 30px rgba(0, 255, 65, 0.15), inset 0 0 15px rgba(0, 255, 65, 0.05);
+      backdrop-filter: blur(8px);
+      text-align: center;
+    }
 
-        .cyber-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(34, 211, 238, 0.3);
-            transition: all 0.3s ease;
-        }
+    /* Encabezado */
+    .header-badge {
+      display: inline-block;
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--matrix-dim);
+      border: 1px dashed var(--matrix-dim);
+      padding: 4px 14px;
+      margin-bottom: 12px;
+      border-radius: 3px;
+    }
 
-        .cyber-btn:hover {
-            background: rgba(34, 211, 238, 0.1);
-            border-color: #22d3ee;
-            transform: translateY(-2px);
-        }
+    .system-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: 6px;
+      color: var(--matrix-bright);
+      text-shadow: 0 0 10px var(--matrix-green), 0 0 25px var(--matrix-green-glow);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
 
-        /* Animación suave para transiciones */
-        .fade-in {
-            animation: fadeIn 0.4s ease-in-out;
-        }
+    .system-subtitle {
+      font-size: 0.95rem;
+      color: #9cd4a6;
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+      letter-spacing: 1px;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    .terminal-status {
+      font-size: 0.8rem;
+      color: var(--matrix-green);
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--matrix-green);
+      box-shadow: 0 0 8px var(--matrix-green);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0.3; transform: scale(0.9); }
+    }
+
+    /* Rejilla del Menú / Botones */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 15px;
+    }
+
+    /* Botones de navegación */
+    .matrix-btn {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 18px 20px;
+      background: rgba(0, 30, 10, 0.5);
+      border: 1px solid var(--matrix-dim);
+      border-radius: 4px;
+      color: #c9ffcf;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .matrix-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--matrix-dim);
+      transition: width 0.25s ease, background 0.25s ease;
+    }
+
+    .btn-meta {
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      color: var(--matrix-dim);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 0.25s ease;
+    }
+
+    .btn-label {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #e0ffe5;
+      transition: color 0.25s ease;
+    }
+
+    .btn-file {
+      font-size: 0.72rem;
+      color: #6a9b75;
+      margin-top: 6px;
+      font-style: normal;
+      transition: color 0.25s ease;
+    }
+
+    /* Estado Hover / Activo */
+    .matrix-btn:hover {
+      background: rgba(0, 255, 65, 0.08);
+      border-color: var(--matrix-green);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 255, 65, 0.25);
+    }
+
+    .matrix-btn:hover::before {
+      width: 6px;
+      background: var(--matrix-green);
+    }
+
+    .matrix-btn:hover .btn-meta {
+      color: var(--matrix-bright);
+    }
+
+    .matrix-btn:hover .btn-label {
+      color: var(--matrix-green);
+      text-shadow: 0 0 8px var(--matrix-green-glow);
+    }
+
+    .matrix-btn:hover .btn-file {
+      color: #a4f5b2;
+    }
+
+    /* Footer */
+    .portal-footer {
+      margin-top: 35px;
+      font-size: 0.75rem;
+      color: #4f7a57;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid rgba(0, 255, 65, 0.15);
+      padding-top: 18px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .portal-container {
+        padding: 25px 15px;
+      }
+      .portal-footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+    }
+  </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body>
 
-    <div class="max-w-md w-full cyber-card rounded-xl overflow-hidden shadow-2xl">
-        
-        <div class="h-1 w-full bg-cyan-500 opacity-50"></div>
+  <!-- Fondo animado Matrix -->
+  <canvas id="matrix-canvas"></canvas>
+  <div class="scanline-overlay"></div>
 
-        <div class="px-6 py-8">
-            <div class="flex items-center gap-6 mb-8">
-                <div class="photo-frame rounded-lg">
-                    <img src="https://image.cdn2.seaart.me/2024-03-06/cnjs0m5e878c73f720b0/d60b0ef7542dce9c075a9038093369f4ac85e7f5_high.webp?w=400&h=400&fit=crop" 
-                         class="w-28 h-28 object-cover rounded-md" alt="Mauricio Muñoz V.">
-                </div>
-                
-                <div class="flex-1">
-                    <h1 class="text-3xl font-bold text-white uppercase tracking-tighter leading-none mb-2">
-                        Mauricio <br> Muñoz V.
-                    </h1>
-                    <p class="text-cyan-400 font-bold text-sm uppercase tracking-widest">
-                        Ingeniero en Informática
-                    </p>
-                    <p class="text-slate-500 text-xs font-mono mt-1">MABRIX.CL</p>
-                </div>
-            </div>
+  <!-- Contenedor del portal -->
+  <main class="portal-container">
+    
+    <span class="header-badge">Terminal Protocol // Active</span>
+    <h1 class="system-title">Mabrix</h1>
+    <p class="system-subtitle">&gt; Portal de acceso modular a credenciales, recursos y utilidades del sistema.</p>
 
-            <div class="neon-line mb-8"></div>
-
-            <div id="view-buttons" class="space-y-6 fade-in">
-                <div class="grid grid-cols-2 gap-4">
-                    <a href="tel:964464059" class="cyber-btn rounded-lg p-5 text-center">
-                        <i class="fa-solid fa-phone text-cyan-400 text-xl mb-2"></i>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-300">Llamar</p>
-                    </a>
-                    <a href="mailto:fenix.mauricio.mm@gmail.com" class="cyber-btn rounded-lg p-5 text-center">
-                        <i class="fa-solid fa-envelope text-orange-400 text-xl mb-2"></i>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-300">Correo</p>
-                    </a>
-                    <a href="https://wa.me/56964464059" target="_blank" class="cyber-btn rounded-lg p-5 text-center">
-                        <i class="fa-brands fa-whatsapp text-emerald-400 text-xl mb-2"></i>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-300">WhatsApp</p>
-                    </a>
-                    <button onclick="abrirVCard()" class="cyber-btn rounded-lg p-5 text-center w-full">
-                        <i class="fa-solid fa-id-card text-blue-400 text-xl mb-2"></i>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-300">Contacto</p>
-                    </button>
-                </div>
-
-                <button onclick="toggleView(true)" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-900/40 active:scale-95">
-                    <i class="fa-solid fa-qrcode mr-2"></i> Obtener mi Archivo
-                </button>
-            </div>
-
-            <div id="view-qr" class="hidden text-center py-4 fade-in">
-                <div class="bg-white p-3 inline-block rounded-2xl shadow-inner border-4 border-cyan-500/30">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fmabrix1977.github.io%2FVC%2F" 
-                         class="w-48 h-48" alt="QR Code">
-                </div>
-                <p class="text-cyan-400 font-mono text-sm mt-4 tracking-widest">LINK: MABRIX1977.GITHUB.IO/VC/</p>
-                
-                <button onclick="toggleView(false)" class="mt-8 text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest flex items-center justify-center w-full gap-2 transition-colors">
-                    <i class="fa-solid fa-arrow-left"></i> Volver a acciones
-                </button>
-            </div>
-        </div>
-
-        <div class="bg-black/40 border-t border-cyan-900/30 p-4 text-center">
-            <p class="text-[10px] text-slate-500 uppercase font-mono tracking-widest">
-                System Sync: OK • v.2026.04
-            </p>
-        </div>
+    <div class="terminal-status">
+      <div class="pulse-dot"></div>
+      <span>SYS_ONLINE: Seleccione un nodo de destino</span>
     </div>
 
-    <script>
-        function toggleView(showQR) {
-            const btnView = document.getElementById('view-buttons');
-            const qrView = document.getElementById('view-qr');
-            
-            if (showQR) {
-                btnView.classList.add('hidden');
-                qrView.classList.remove('hidden');
-            } else {
-                qrView.classList.add('hidden');
-                btnView.classList.remove('hidden');
-            }
-        }
+    <!-- Menú de navegación Matrix -->
+    <nav class="menu-grid" aria-label="Menú principal Mabrix">
+      
+      <!-- 1. Curriculum Vitae -->
+      <a href="cv.html" class="matrix-btn">
+        <span class="btn-meta">NODE_01 // BIO</span>
+        <span class="btn-label">[01] CV</span>
+        <span class="btn-file">target: cv.html</span>
+      </a>
 
-        function abrirVCard() {
-            const vCardData = `BEGIN:VCARD\nVERSION:3.0\nFN:Mauricio Muñoz V.\nTITLE:Ingeniero en Informática\nTEL;TYPE=CELL:+56964464059\nEMAIL:fenix.mauricio.mm@gmail.com\nURL:https://mabrix1977.github.io/VC/\nEND:VCARD`;
-            const blob = new Blob([vCardData], { type: 'text/vcard;charset=utf-8' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.type = 'text/vcard';
-            a.target = '_blank';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+      <!-- 2. Tarjeta Virtual -->
+      <a href="vc.html" class="matrix-btn">
+        <span class="btn-meta">NODE_02 // CONTACT</span>
+        <span class="btn-label">[02] Virtual Card</span>
+        <span class="btn-file">target: vc.html</span>
+      </a>
+
+      <!-- 3. Promt -->
+      <a href="prompt.html" class="matrix-btn">
+        <span class="btn-meta">NODE_03 // CORE AI</span>
+        <span class="btn-label">[03] Prompt</span>
+        <span class="btn-file">target: prompt.html</span>
+      </a>
+
+      <!-- 4. Coffe -->
+      <a href="coffe.html" class="matrix-btn">
+        <span class="btn-meta">NODE_04 // FUEL</span>
+        <span class="btn-label">[04] Coffee</span>
+        <span class="btn-file">target: coffe.html</span>
+      </a>
+
+      <!-- 5. Enlaces -->
+      <a href="enlaces.html" class="matrix-btn">
+        <span class="btn-meta">NODE_05 // ROUTING</span>
+        <span class="btn-label">[05] Enlaces</span>
+        <span class="btn-file">target: enlaces.html</span>
+      </a>
+
+    </nav>
+
+    <!-- Pie de consola -->
+    <footer class="portal-footer">
+      <span>LOCATION: ROOT/MABRIX/SYSTEM</span>
+      <span>SECURE PORT: 8080 // OK</span>
+    </footer>
+
+  </main>
+
+  <!-- Script Matrix Rain Effect -->
+  <script>
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Caracteres Matrix (Katakana y dígitos binarios)
+    const characters = 'ｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘ0123456789ABCDEF';
+    const fontSize = 14;
+    let columns = Math.floor(canvas.width / fontSize);
+    let drops = Array(columns).fill(1);
+
+    function drawMatrixRain() {
+      ctx.fillStyle = 'rgba(5, 8, 5, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#00ff41';
+      ctx.font = `${fontSize}px 'Fira Code', monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = characters.charAt(Math.floor(Math.random() * characters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
         }
-    </script>
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrixRain, 33);
+  </script>
 </body>
 </html>
